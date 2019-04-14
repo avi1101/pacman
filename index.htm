@@ -2,29 +2,36 @@
 <html>
 
 <head>
-    <title>PACMAN0 308000017-308468784</title>
-    <link rel="icon" href="images/img1.png">
     <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
 <body>
-<div id="menu" style="position: sticky; top: 0;">
-<a href="#welcome">Welcome</a>
-<a href="#Login">Login</a>
-<a href="#Register">Register</a>
-<a href="#aboutus">About us</a>
-</div>
-  SCORE:
+    <div class="header">
+        <a href="#top" class="logo"><img src="assets/favicon.ico" height="85" width="85" id="logoimg"/></a>
+        <div class="header-right">
+            <a href="#about" class="active">About Me</a>
+            <a href="#photos" class="active">My Photos</a>
+            <a href="#playlist" class="active">My Playlist</a>
+            <a href="#like" class="active">Like</a>
+            <a href="#qrcoder" class="active">QR code</a>
+            <a href="#spa" class="active">Q&A</a>
+            <a href="#contact" class="active">Contact Me</a>
+        </div>
+    </div>
+    SCORE:
 <input id="lblScore" type="text"/>
 <br/>
 TIME:
 <input id="lblTime" type="text"/>
 <br/>
 <canvas id="canvas" height="600" width="600"></canvas>
+<canvas id="canvas1" height="600" width="600">c1</canvas>
+
 
 
 <script type="text/javascript">
     var context = canvas.getContext("2d");
+    var context2 = canvas1.getContext("2d");
     var shape = new Object();
     var board;
     var score;
@@ -34,7 +41,7 @@ TIME:
     var interval;
 
     Start();
-
+    Draw();
     function Start() {
         board = new Array();
         score = 0;
