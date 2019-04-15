@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<database>
+    <User>
+        <username>username1</username>
+        <password>1</password>
+        <firstname>user</firstname>
+        <lastname>user</lastname>
+        <email>user@user.com</email>
+        <birthdate>01/01/1970</birthdate>
+    </User>
+    <User>
+        <username>username2</username>
+        <password>2</password>
+        <firstname>user2</firstname>
+        <lastname>user2</lastname>
+        <email>user2@user.com</email>
+        <birthdate>01/01/1970</birthdate>
+    </User>
+</database>
