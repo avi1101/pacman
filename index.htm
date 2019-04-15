@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="english">
 
 <head>
     <title>PACMAN0 308000017-308468784</title>
     <link rel="icon" href="images/img1.png">
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
-
 <body>
     <div class="header">
         <a href="#top" class="logo"><img src="assets/favicon.ico" height="85" width="85" id="logoimg"/></a>
         <div class="header-right">
+            <button type="button" onclick="document.getElementById('login').style.visibility='visible';">Login</button>
             <a href="#about" class="active">About Me</a>
             <a href="#photos" class="active">My Photos</a>
             <a href="#playlist" class="active">My Playlist</a>
@@ -20,6 +21,16 @@
             <a href="#contact" class="active">Contact Me</a>
         </div>
     </div>
+    <div id="login" class="login">
+        <form>
+            User name:<br>
+            <input type="text" id="username" name="username"><br>
+            User password:<br>
+            <input type="password" id="password" name="psw">
+        </form>
+        <input type="button" onclick="if(check_password(username,psw)){}" value="Click Me!">
+    </div>
+    <div id="game">
     SCORE:
 <input id="lblScore" type="text"/>
 <br/>
@@ -28,7 +39,7 @@ TIME:
 <br/>
 <canvas id="canvas" height="600" width="600"></canvas>
 <canvas id="canvas1" height="600" width="600">c1</canvas>
-
+    </div>
 
 
 <script type="text/javascript">
@@ -89,8 +100,6 @@ TIME:
         }, false);
         interval = setInterval(UpdatePosition, 250);
     }
-
-
     function findRandomEmptyCell(board) {
         var i = Math.floor((Math.random() * 9) + 1);
         var j = Math.floor((Math.random() * 9) + 1);
@@ -118,7 +127,6 @@ TIME:
             return 4;
         }
     }
-
     function Draw() {
         context.clearRect(0, 0, canvas.width, canvas.height); //clean board
         lblScore.value = score;
@@ -151,10 +159,7 @@ TIME:
                 }
             }
         }
-
-
     }
-
     function UpdatePosition() {
         board[shape.i][shape.j] = 0;
         var x = GetKeyPressed();
@@ -194,7 +199,14 @@ TIME:
             Draw();
         }
     }
+
+    function check_password(username,password)
+    {
+        return $.get("database.xml",function(xml){
+            const pass = xml.find('password[username="' + username + '"]').text();
+            return pass === password;});}
 </script>
+
 </body>
 
 </html>
