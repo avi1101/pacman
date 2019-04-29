@@ -7,30 +7,32 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
+<br/><br/><br/><br/><br/><br/>
 <body>
     <div class="header">
-        <a href="#top" class="logo"><img src="assets/favicon.ico" height="85" width="85" id="logoimg"/></a>
+        <a href="#top" class="logo"><img src="images/icon.png" height="40" width="85" id="logoimg"/></a>
         <div class="header-right">
-            <button type="button" onclick="document.getElementById('login').style.visibility='visible';">Login</button>
-            <a href="#about" class="active">About Me</a>
-            <a href="#photos" class="active">My Photos</a>
-            <a href="#playlist" class="active">My Playlist</a>
-            <a href="#like" class="active">Like</a>
-            <a href="#qrcoder" class="active">QR code</a>
-            <a href="#spa" class="active">Q&A</a>
-            <a href="#contact" class="active">Contact Me</a>
+            <button class="button" onclick="loginButton()" >Login</button>
+            <button class="button" onclick="OpenGame()" >Game</button>
+            <button class="button" onclick="OpenGame()" >Register</button>
+            <button class="button" onclick="OpenGame()" >About</button>
         </div>
     </div>
-    <div id="login" class="login">
+
+<div id="welcome" class="welcome">
+    <h1>Welcome to Pacman!</h1>
+
+</div>
+    <div id="login" class="login" style="display: none;">
         <form>
             User name:<br>
             <input type="text" id="username" name="username"><br>
             User password:<br>
             <input type="password" id="password" name="psw">
         </form>
-        <input type="button" onclick="if(check_password(username,psw)){}" value="Click Me!">
+        <input type="button" onclick="loginButton()" value="Click Me!">
     </div>
-    <div id="game">
+    <div id="game" style="display: none;">
     SCORE:
 <input id="lblScore" type="text"/>
 <br/>
@@ -204,7 +206,28 @@ TIME:
     {
         return $.get("database.xml",function(xml){
             const pass = xml.find('password[username="' + username + '"]').text();
-            return pass === password;});}
+            return pass === password;
+        });
+    }
+
+    function OpenGame()
+    {
+        var game_div = document.getElementById("game");
+        if(game_div.style.display == "none")
+            game_div.style.display = "block"
+        else
+            game_div.style.display = "none"; /* none inline block */
+    }
+
+    function loginButton()
+    {
+        var login_div = document.getElementById("login");
+        if(login_div.style.display == "none")
+            login_div.style.display = "block"
+        else
+            login_div.style.display = "none"; /* none inline block */
+    }
+
 </script>
 
 </body>

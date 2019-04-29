@@ -18,7 +18,7 @@ img {
 .header {
   z-index: 1;
   position: fixed;
-  top: 0;
+  top: 0px;
   width: 100%;
   overflow: hidden;
   background-color: #000000;
@@ -27,39 +27,45 @@ img {
   widows: 85px;
 }
 
-.header a {
-  float: left;
+.header button {
+  background-color: yellow; /* Green */
+  border: 1px solid green;
   color: black;
+  padding: 15px 32px;
   text-align: center;
-  padding: 12px;
   text-decoration: none;
-  font-size: 18px; 
-  line-height: 25px;
-  border-radius: 4px;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  float: left;
 }
 
-.header a.logo {
-  font-size: 25px;
+.header button.logo {
+  font-size: 10px;
   font-weight: bold;
 }
 
-.header a:hover {
-  background-color: #ddd;
+.header button:hover {
+  background-color: greenyellow;
   color: black;
 }
 
-.header a.active {
+.header button.active {
   background-color: #8c8c8c;
   color: white;
 }
 
-.header a.active:hover {
+.header button.active:hover {
 	background-color: cornflowerblue;
 	color: white;
   }
 
 .header-right {
   float: right;
+}
+
+.logo{
+  float: left;
 }
 
 @media screen and (max-width: 500px) {
