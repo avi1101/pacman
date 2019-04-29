@@ -9,21 +9,22 @@
 </head>
 <br/><br/><br/><br/><br/><br/>
 <body>
-    <div class="header">
-        <a href="#top" class="logo"><img src="images/icon.png" height="40" width="85" id="logoimg"/></a>
+    <div class="header">                            <!------- Header DIV here --------->
+        <a href="#top" class="logo"><img src="images/pcgif.gif" height="40" width="85" id="logoimg"/></a>
         <div class="header-right">
             <button class="button" onclick="loginButton()" >Login</button>
             <button class="button" onclick="OpenGame()" >Game</button>
-            <button class="button" onclick="OpenGame()" >Register</button>
-            <button class="button" onclick="OpenGame()" >About</button>
+            <button class="button" onclick="OpenRegister()" >Register</button>
+            <button class="button" onclick="OpenWelcone()" >About</button>
         </div>
     </div>
 
-<div id="welcome" class="welcome">
-    <h1>Welcome to Pacman!</h1>
+    <div id="welcome" class="welcome">              <!------- Welcome DIV here --------->
+        <h1>Welcome to Pacman!</h1>
+        <img src="images/pcgif2.gif" alt="pacman">
 
-</div>
-    <div id="login" class="login" style="display: none;">
+    </div>
+    <div id="login" class="login" style="display: none;">   <!------- Login DIV here --------->
         <form>
             User name:<br>
             <input type="text" id="username" name="username"><br>
@@ -32,17 +33,22 @@
         </form>
         <input type="button" onclick="loginButton()" value="Click Me!">
     </div>
-    <div id="game" style="display: none;">
-    SCORE:
-<input id="lblScore" type="text"/>
-<br/>
-TIME:
-<input id="lblTime" type="text"/>
-<br/>
-<canvas id="canvas" height="600" width="600"></canvas>
-<canvas id="canvas1" height="600" width="600">c1</canvas>
+    <div id="game" style="display: none;">          <!--------- Game DIV here ----------->
+        SCORE:
+        <input id="lblScore" type="text"/>
+        <br/>
+        TIME:
+        <input id="lblTime" type="text"/>
+        <br/>
+        <canvas id="canvas" height="600" width="600"></canvas>
+        <canvas id="canvas1" height="600" width="600">c1</canvas>
     </div>
-
+    <div id="register" style="display: none;">      <!------- Register DIV here --------->
+        <h1>register here</h1>
+    </div>
+    <div id="about" style="display: none;">
+        <h1>About this game</h1>
+    </div>
 
 <script type="text/javascript">
     var context = canvas.getContext("2d");
@@ -54,6 +60,7 @@ TIME:
     var start_time;
     var time_elapsed;
     var interval;
+    var login = false;
 
     Start();
     Draw();
@@ -202,6 +209,24 @@ TIME:
         }
     }
 
+    /**
+     * close chosen divs
+     * @param args - boolean to hide welcome div or not
+     */
+    function closeDivs(welcome, login, game, about, register)
+    {
+        if(welcome)
+            document.getElementById("welcome").style.display = "none";
+        if(login)
+            document.getElementById("login").style.display = "none";
+        if(game)
+            document.getElementById("game").style.display = "none";
+        if(about)
+            document.getElementById("about").style.display = "none";
+        if(register)
+            document.getElementById("register").style.display = "none";
+    }
+
     function check_password(username,password)
     {
         return $.get("database.xml",function(xml){
@@ -212,20 +237,46 @@ TIME:
 
     function OpenGame()
     {
+        if(login == false) {
+            alert("You need to login first");
+            return;
+        }
+        closeDivs(true, true, true, true, true);
         var game_div = document.getElementById("game");
         if(game_div.style.display == "none")
-            game_div.style.display = "block"
+            game_div.style.display = "block";
         else
             game_div.style.display = "none"; /* none inline block */
     }
 
     function loginButton()
     {
+        closeDivs(true, true, true, true, true);
         var login_div = document.getElementById("login");
         if(login_div.style.display == "none")
-            login_div.style.display = "block"
+            login_div.style.display = "block";
         else
             login_div.style.display = "none"; /* none inline block */
+    }
+
+    function OpenWelcone()
+    {
+        closeDivs(true, true, true, true, true);
+        var welcome_div = document.getElementById("welcome");
+        if(welcome_div.style.display == "none")
+            welcome_div.style.display = "block";
+        else
+            welcome_div.style.display = "none"; /* none inline block */
+    }
+
+    function OpenRegister()
+    {
+        closeDivs(true, true, true, true, true);
+        var register_div = document.getElementById("register");
+        if(register_div.style.display == "none")
+            register_div.style.display = "block";
+        else
+            register_div.style.display = "none"; /* none inline block */
     }
 
 </script>
