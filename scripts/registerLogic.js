@@ -1,5 +1,6 @@
 var users ={};
 users['a']={password: "a", firstName: "a", lastName: "a", email: "a@a.a.il", birthday: "01/01/70"};
+var login = false;
 
 function foo(){
     alert("works");
@@ -61,6 +62,22 @@ $( document ).ready(function() {
 });
 function check_password(username,password)
 {
+    if(login)
+    {
+        login = false;
+        document.getElementById("loginbtn").innerText = "Login";
+        return;
+    }
     if((username in users && users[username].password=== password))
         login=true;
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+    if(!login){
+        window.alert('Wrong username or password');
+    }
+    else
+        {
+            document.getElementById("loginbtn").innerText = "Disconnect";
+            OpenGame();
+        }
 }
