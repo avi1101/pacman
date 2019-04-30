@@ -361,3 +361,121 @@ $( document ).ready(function() {
         return board;
     }
 });
+
+function randomMove(shape) {
+    var rand=Math.random();
+    if(rand<0.25){
+        if (shape.j > 0 && board[shape.i][shape.j - 1] !== 4) {
+            shape.j--;
+        }
+    }
+    else if(rand<0.5){
+            if (shape.j < height-1 && board[shape.i][shape.j + 1] !== 4)
+                shape.j++;
+    }
+    else if(rand<0.75){
+            if (shape.i > 0 && board[shape.i - 1][shape.j] !== 4)
+                shape.i--;
+    }
+    else{
+        if (shape.i < width-1 && board[shape.i + 1][shape.j] !== 4)
+            shape.i++;
+    }
+}
+
+function semi_randomMove(shape,pacman){
+    var rand = Math.random();
+    if(rand < 0.2) randomMove(shape);
+    else if(rand<0.9)
+        bestWay2pacMan(shape,pacman,false);
+    else
+        bestWay2pacMan(shape,pacman,true);
+}
+
+function bestWay2pacMan(shape,pacman,far) {
+    arr = [];
+    if (shape.j > 0 && board[shape.i][shape.j - 1] !== 4)
+        arr[0] = ManhattanDist(shape.i, shape.j - 1, pacman.i, pacman.j);
+    if (shape.j < height - 1 && board[shape.i][shape.j + 1] !== 4)
+        arr[1] = ManhattanDist(shape.i, shape.j + 1, pacman.i, pacman.j);
+    if (shape.i > 0 && board[shape.i - 1][shape.j] !== 4)
+        arr[2] = ManhattanDist(shape.i - 1, shape.j, pacman.i, pacman.j);
+    if (shape.i < width - 1 && board[shape.i + 1][shape.j] !== 4)
+        arr[3] = ManhattanDist(shape.i + 1, shape.j, pacman.i, pacman.j);
+    if(far) {
+        switch (arr.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0)) {
+            case 0:
+                shape.j--;
+                break;
+            case 1:
+                shape.j++;
+                break;
+            case 2:
+                shape.i--;
+                break;
+            case 3:
+                shape.i++;
+                break;
+        }
+    }
+    else{
+            switch (arr.reduce((iMin, x, i, arr) => x > arr[iMin] ? i : iMin, 999)) {
+                case 0:
+                    shape.j--;
+                    break;
+                case 1:
+                    shape.j++;
+                    break;
+                case 2:
+                    shape.i--;
+                    break;
+                case 3:
+                    shape.i++;
+                    break;
+        }
+    }
+}
+/**
+ * @return {number}
+ */
+function ManhattanDist(p1_x,p1_y,p2_x,p2_y){
+    return Math.abs(p1_x-p2_x) + Math.abs(p1_y-p2_y);
+}
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+}
+/**
+
+ [0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0],
+ [0,0,0,0,1,1,0,0,0,0,0,1,1,1,1,1,0,0,1,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+ [0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+ [0,0,0,0,0,1,1,1,0,1,1,1,1,1,1,0,0,1,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+ [0,0,0,1,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0],
+ [0,0,0,1,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0],
+ [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
+ **/
