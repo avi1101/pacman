@@ -16,7 +16,7 @@
             <button class="button" onclick="loginButton()" >Login</button>
             <button class="button" onclick="OpenGame()" >Game</button>
             <button class="button" onclick="OpenRegister()" >Register</button>
-            <button class="button" onclick="OpenWelcone()" >About</button>
+            <button class="button" onclick="OpenWelcome()" >About</button>
         </div>
     </div>
 
@@ -32,7 +32,9 @@
             User password:<br>
             <input type="password" id="password" name="psw">
         </form>
-        <input type="button" onclick="loginButton()" value="Click Me!">
+        <input onclick="check_password(username,password);if(!is_registerd){window.alert('Wrong username or password');}
+        else{login=true;OpenGame();}" type="button"
+               value="login!">
     </div>
     <div id="game" style="display: none;">          <!--------- Game DIV here ----------->
         SCORE:
@@ -97,6 +99,10 @@
     var time_elapsed;
     var interval;
     var login = false;
+    var is_registerd=false
+    var user_dic = {
+        username: "Chris",
+        password: 1,};
 
     Start();
     Draw();
@@ -265,10 +271,26 @@
 
     function check_password(username,password)
     {
-        return $.get("database.xml",function(xml){
-            const pass = xml.find('password[username="' + username + '"]').text();
-            return pass === password;
+        $(document).ready(function(){
+            $.ajax({
+                type: "GET",
+                url: "database.xml",
+                dataType: "xml",
+                success: function(xml) {
+                    $(xml).find('User').each(function(){
+                        var name = $(this).attr('username');
+                        var pass = $(this).attr('password').text();
+                        if (name=== username && pass === password)
+                            is_registerd = true;
+                    });
+                }
+            });
         });
+        //return $.get("database.xml",function(xml){
+        //    const pass = xml.find('password[username="' + username + '"]').text();
+        //    is_registerd = (pass === password);
+        //    return is_registerd
+        //});
     }
 
     function OpenGame()
@@ -285,7 +307,7 @@
             game_div.style.display = "none"; /* none inline block */
     }
 
-    function loginButton()
+    function loginButton(username, password)
     {
         closeDivs(true, true, true, true, true);
         var login_div = document.getElementById("login");
@@ -295,7 +317,7 @@
             login_div.style.display = "none"; /* none inline block */
     }
 
-    function OpenWelcone()
+    function OpenWelcome()
     {
         closeDivs(true, true, true, true, true);
         var welcome_div = document.getElementById("welcome");
