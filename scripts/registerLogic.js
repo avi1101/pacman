@@ -20,7 +20,7 @@ $( document ).ready(function() {
         var password = $('#psw').val();
         var firstname = $('#firstname').val();
         var lastname = $('#lastname').val();
-        var date = $('#date').val();
+        var date = $('#datepicker').val();
         if(!/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email))
         {
             $('#warnings').text("Email not valid");
@@ -49,6 +49,12 @@ $( document ).ready(function() {
         var details = {password: password, firstName: firstname, lastName: lastname, email: email, birthday: date};
         users[username] = details;
         alert("Registration Completed!\nYou may login now, Enjoy :)");
+        $('#email').val("");
+        $('#username1').val("");
+        $('#psw').val("");
+        $('#firstname').val("");
+        $('#lastname').val("");
+        $('#datepicker').val(null);
         return;
     });
 
