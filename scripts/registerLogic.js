@@ -59,3 +59,8 @@ $( document ).ready(function() {
     });
 
 });
+function check_password(username,password)
+{
+    if((username in users && users[username].password=== password))
+        login=true;
+}
