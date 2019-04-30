@@ -1,8 +1,9 @@
 $( document ).ready(function() {
     var context = canvas.getContext("2d");
     //var context2 = canvas1.getContext("2d");
-    var shape = new Object();
+    var shape = new Object(), g1 = new Object(), g2 = new Object(), g3 = new Object();
     var board = [];
+    var board_copy = [];
     var score;
     var pac_color;
     var start_time;
@@ -23,13 +24,18 @@ $( document ).ready(function() {
     var upKey = "38";
     var food_remain = 20;
     var status = 0; //0 - not started, 1 - on going, 2 - win, 3 - lose, 4 = draw
-    var ghosts = [new Image(),new Image(),new Image()];
+    var ghosts = [new Image(),new Image(),new Image()], gs = [g1, g2, g3];
+    var lives = 3;
     //var ghost4 = new Image();
     ghosts[0].src = "images/blue_ghost.gif";
     ghosts[1].src = "images/pink_ghost.gif";
     ghosts[2].src = "images/red_ghost.gif";
+    g1.img = ghosts[0];
+    g2.img = ghosts[1];
+    g3.img = ghosts[2];
     //ghost4.src = "images/yellow_ghost.gif";
     var stack = [];
+    var stack_ghosts = [];
     //stack.push(ghost4);
     //Start();
     //Draw();
@@ -41,8 +47,10 @@ $( document ).ready(function() {
 
     function setMonsters()
     {
-        for(var i = 0; i < monsters; i++)
+        for(var i = 0; i < monsters; i++) {
             stack.push(ghosts[i]);
+            stack_ghosts.push(gs[i]);
+        }
     }
 
     function Start() {
@@ -74,6 +82,8 @@ $( document ).ready(function() {
         {
             var pos = findRandomCellFarFromPacman(board);
             board[pos[0]][pos[1]] = 3;
+            gs[i].i = pos[0];
+            gs[i].j = pos[1];
         }
         for(var i = 0; i < fruits; i++)
         {
@@ -88,6 +98,16 @@ $( document ).ready(function() {
             var emptyCell = findRandomEmptyCell(board);
             board[emptyCell[0]][emptyCell[1]] = 4;
             food_remain--;
+        }
+        board_copy = new Array();
+        for(var i = 0; i < height; i++)
+        {
+            board_copy[i] = new Array();
+            for(var j = 0; j < width; j++)
+                if(board[i][j] == 4)
+                    board_copy[i][j] = board[i][j];
+                else
+                    board_copy[i][j] = 0;
         }
         keysDown = {};
         addEventListener("keydown", function (e) {
@@ -142,6 +162,7 @@ $( document ).ready(function() {
         context.clearRect(0, 0, canvas.width, canvas.height); //clean board
         lblScore.innerText = "Score:\t"+score;
         lblTime.innerText = "Time:\t"+time_elapsed;
+        life.innerText = "Lives:\t"+lives;
         for (var i = 0; i < height; i++) {
             for (var j = 0; j < width; j++) {
                 var center = new Object();
@@ -179,9 +200,9 @@ $( document ).ready(function() {
                     // context.arc(center.x, center.y, ob_size/4, 0, 2 * Math.PI); // circle
                     // context.fillStyle = "purple"; //color
                     // context.fill();
-                    var ghost = stack.shift();
-                    context.drawImage(ghost,0,0,ghost.width,ghost.height,center.x-ob_size/2,center.y-ob_size/2,ob_size,ob_size);
-                    stack.push(ghost);
+                    var ghost = getGhost(i, j);
+                    context.drawImage(ghost.img,0,0,ghost.img.width,ghost.img.height,center.x-ob_size/2,center.y-ob_size/2,ob_size,ob_size);
+                    stack_ghosts.push(ghost);
                 } else if (board[i][j] === 5){
                     context.beginPath();
                     context.arc(center.x, center.y, ob_size/4, 0, 2 * Math.PI); // circle
@@ -198,6 +219,14 @@ $( document ).ready(function() {
         }
     }
 
+    function getGhost(i, j)
+    {
+        for(var n = 0; n < monsters; n++)
+        {
+            if(gs[n].i == i && gs[n].j == j)
+                return gs[n];
+        }
+    }
     /*
     keysDown['ArrowUp'] = 1
     keysDown['ArrowDown'] = 2
@@ -233,12 +262,25 @@ $( document ).ready(function() {
         if(board[shape.i][shape.j] == 3)
         {
             board[shape.i][shape.j] = 3;
-            status = 3;
+            lives--;
+            if(lives < 0)
+                status = 3;
+            else
+            {
+                var pos = findRandomEmptyCell(board);
+                board[pos[0]][pos[1]] = 2;
+                shape.i = pos[0];
+                shape.j = pos[1];
+            }
         }
         else board[shape.i][shape.j] = 2;
         var currentTime = new Date();
         time_elapsed = (currentTime - start_time) / 1000;
         time_elapsed = secondsToHms(~~time_elapsed);
+        for(var i = 0; i < monsters; i++)
+        {
+            ghostMove(stack_ghosts[i]);
+        }
         if (score >= 20 && time_elapsed <= 10) {
             pac_color = "green";
         }
@@ -255,13 +297,13 @@ $( document ).ready(function() {
         }
     }
 
-    // downloadTimer = setInterval(function(){
-    //     document.getElementById("timerlbl").innerText = secondsToHms(timeleft);
-    //     timeleft += 1;
-    //     if(timeleft <= 0)
-    //         clearInterval(downloadTimer);
-    // }, 1000);
-    //
+    function ghostMove(ghost)
+    {
+        board[ghost.i][ghost.j] = board_copy[ghost.i][ghost.j];
+        semi_randomMove(ghost);
+        board[ghost.i][ghost.j] = 3;
+    }
+
     function secondsToHms(d) {
         d = Number(d);
         var h = Math.floor(d / 3600);
@@ -360,101 +402,102 @@ $( document ).ready(function() {
         }
         return board;
     }
-});
 
-function randomMove(shape) {
-    var rand=Math.random();
-    if(rand<0.25){
-        if (shape.j > 0 && board[shape.i][shape.j - 1] !== 4) {
-            shape.j--;
+    function randomMove(moving_object) {
+        var rand=Math.random();
+        if(rand<0.25){
+            if (moving_object.j > 0 && board[moving_object.i][moving_object.j - 1] !== 1) {
+                moving_object.j--;
+            }
+        }
+        else if(rand<0.5){
+            if (moving_object.j < height-1 && board[moving_object.i][moving_object.j + 1] !== 1)
+                moving_object.j++;
+        }
+        else if(rand<0.75){
+            if (moving_object.i > 0 && board[moving_object.i - 1][moving_object.j] !== 1)
+                moving_object.i--;
+        }
+        else{
+            if (moving_object.i < width-1 && board[moving_object.i + 1][moving_object.j] !== 1)
+                moving_object.i++;
         }
     }
-    else if(rand<0.5){
-            if (shape.j < height-1 && board[shape.i][shape.j + 1] !== 4)
-                shape.j++;
-    }
-    else if(rand<0.75){
-            if (shape.i > 0 && board[shape.i - 1][shape.j] !== 4)
-                shape.i--;
-    }
-    else{
-        if (shape.i < width-1 && board[shape.i + 1][shape.j] !== 4)
-            shape.i++;
-    }
-}
 
-function semi_randomMove(shape,pacman){
-    var rand = Math.random();
-    if(rand < 0.2) randomMove(shape);
-    else if(rand<0.9)
-        bestWay2pacMan(shape,pacman,false);
-    else
-        bestWay2pacMan(shape,pacman,true);
-}
-
-function bestWay2pacMan(shape,pacman,far) {
-    arr = [];
-    if (shape.j > 0 && board[shape.i][shape.j - 1] !== 4)
-        arr[0] = ManhattanDist(shape.i, shape.j - 1, pacman.i, pacman.j);
-    if (shape.j < height - 1 && board[shape.i][shape.j + 1] !== 4)
-        arr[1] = ManhattanDist(shape.i, shape.j + 1, pacman.i, pacman.j);
-    if (shape.i > 0 && board[shape.i - 1][shape.j] !== 4)
-        arr[2] = ManhattanDist(shape.i - 1, shape.j, pacman.i, pacman.j);
-    if (shape.i < width - 1 && board[shape.i + 1][shape.j] !== 4)
-        arr[3] = ManhattanDist(shape.i + 1, shape.j, pacman.i, pacman.j);
-    if(far) {
-        switch (arr.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0)) {
-            case 0:
-                shape.j--;
-                break;
-            case 1:
-                shape.j++;
-                break;
-            case 2:
-                shape.i--;
-                break;
-            case 3:
-                shape.i++;
-                break;
-        }
+    function semi_randomMove(ghost_object){
+        var rand = Math.random();
+        if(rand < 0.05) randomMove(ghost_object);
+        else if(rand<0.9)
+            bestWay2pacMan(ghost_object,false);
+        else
+            bestWay2pacMan(ghost_object,true);
     }
-    else{
-            switch (arr.reduce((iMin, x, i, arr) => x > arr[iMin] ? i : iMin, 999)) {
+
+    function bestWay2pacMan(ghost_object,far) {
+        var arr = [];
+        if (ghost_object.j > 0 && board[ghost_object.i][ghost_object.j - 1] !== 1)
+            arr[0] = ManhattanDist(ghost_object.i, ghost_object.j - 1, shape.i, shape.j);
+        if (ghost_object.j < height - 1 && board[ghost_object.i][ghost_object.j + 1] !== 1)
+            arr[1] = ManhattanDist(ghost_object.i, ghost_object.j + 1, shape.i, shape.j);
+        if (ghost_object.i > 0 && board[ghost_object.i - 1][ghost_object.j] !== 1)
+            arr[2] = ManhattanDist(ghost_object.i - 1, ghost_object.j, shape.i, shape.j);
+        if (ghost_object.i < width - 1 && board[ghost_object.i + 1][ghost_object.j] !== 1)
+            arr[3] = ManhattanDist(ghost_object.i + 1, ghost_object.j, shape.i, shape.j);
+        if(far) {
+            switch (arr.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0)) {
                 case 0:
-                    shape.j--;
+                    ghost_object.j--;
                     break;
                 case 1:
-                    shape.j++;
+                    ghost_object.j++;
                     break;
                 case 2:
-                    shape.i--;
+                    ghost_object.i--;
                     break;
                 case 3:
-                    shape.i++;
+                    ghost_object.i++;
                     break;
+            }
+        }
+        else{
+            switch (arr.reduce((iMin, x, i, arr) => x > arr[iMin] ? i : iMin, 999)) {
+                case 0:
+                    ghost_object.j--;
+                    break;
+                case 1:
+                    ghost_object.j++;
+                    break;
+                case 2:
+                    ghost_object.i--;
+                    break;
+                case 3:
+                    ghost_object.i++;
+                    break;
+            }
         }
     }
-}
-/**
- * @return {number}
- */
-function ManhattanDist(p1_x,p1_y,p2_x,p2_y){
-    return Math.abs(p1_x-p2_x) + Math.abs(p1_y-p2_y);
-}
-function sound(src) {
-    this.sound = document.createElement("audio");
-    this.sound.src = src;
-    this.sound.setAttribute("preload", "auto");
-    this.sound.setAttribute("controls", "none");
-    this.sound.style.display = "none";
-    document.body.appendChild(this.sound);
-    this.play = function(){
-        this.sound.play();
+    /**
+     * @return {number}
+     */
+    function ManhattanDist(p1_x,p1_y,p2_x,p2_y){
+        return Math.abs(p1_x-p2_x) + Math.abs(p1_y-p2_y);
     }
-    this.stop = function(){
-        this.sound.pause();
+    function sound(src) {
+        this.sound = document.createElement("audio");
+        this.sound.src = src;
+        this.sound.setAttribute("preload", "auto");
+        this.sound.setAttribute("controls", "none");
+        this.sound.style.display = "none";
+        document.body.appendChild(this.sound);
+        this.play = function(){
+            this.sound.play();
+        }
+        this.stop = function(){
+            this.sound.pause();
+        }
     }
-}
+});
+
 /**
 
  [0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
