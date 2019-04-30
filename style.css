@@ -186,3 +186,35 @@ a {
   text-decoration: none;
   cursor: pointer;
 }
+
+#canvas {
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  border:5px solid blue;
+  border-radius: 25px;
+  background-color: black;
+  display: inline;
+}
+
+#game {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.canvas_container {
+  width: 100%;
+  text-align:center;
+}
+
+.game_data {
+  display:inline;
+  width: 25%;
+  margin-left: auto;
+  margin-right: auto;
+  border-color: red;
+  background-color: black;
+  color: red;
+  padding: 20px;
+}
