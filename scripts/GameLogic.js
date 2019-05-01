@@ -116,7 +116,7 @@ $( document ).ready(function() {
         addEventListener("keyup", function (e) {
             keysDown[e.code] = false;
         }, false);
-        interval = setInterval(UpdatePosition, 100);
+        interval = setInterval(UpdatePosition, 150);
     }
 
     function findRandomEmptyCell(board) {
@@ -427,24 +427,31 @@ $( document ).ready(function() {
     function semi_randomMove(ghost_object){
         var rand = Math.random();
         if(rand < 0.05) randomMove(ghost_object);
-        else if(rand<0.9)
+        else if(rand<0.7)
             bestWay2pacMan(ghost_object,false);
         else
             bestWay2pacMan(ghost_object,true);
     }
 
     function bestWay2pacMan(ghost_object,far) {
-        var arr = [];
-        if (ghost_object.j > 0 && board[ghost_object.i][ghost_object.j - 1] !== 1)
+        var arr = [-1,-1,-1,-1];
+        var index = 0;
+        // var wall1 = board[ghost_object.i][ghost_object.j - 1];
+        // var wall2 = board[ghost_object.i][ghost_object.j + 1];
+        // var wall3 = board[ghost_object.i - 1][ghost_object.j];
+        // var wall4 = board[ghost_object.i + 1][ghost_object.j];
+        if (ghost_object.j > 0 && board[ghost_object.i][ghost_object.j - 1] != 1)
             arr[0] = ManhattanDist(ghost_object.i, ghost_object.j - 1, shape.i, shape.j);
-        if (ghost_object.j < height - 1 && board[ghost_object.i][ghost_object.j + 1] !== 1)
+        if (ghost_object.j < height - 1 && board[ghost_object.i][ghost_object.j + 1] != 1)
             arr[1] = ManhattanDist(ghost_object.i, ghost_object.j + 1, shape.i, shape.j);
-        if (ghost_object.i > 0 && board[ghost_object.i - 1][ghost_object.j] !== 1)
+        if (ghost_object.i > 0 && board[ghost_object.i - 1][ghost_object.j] != 1)
             arr[2] = ManhattanDist(ghost_object.i - 1, ghost_object.j, shape.i, shape.j);
-        if (ghost_object.i < width - 1 && board[ghost_object.i + 1][ghost_object.j] !== 1)
+        if (ghost_object.i < width - 1 && board[ghost_object.i + 1][ghost_object.j] != 1)
             arr[3] = ManhattanDist(ghost_object.i + 1, ghost_object.j, shape.i, shape.j);
+        var res = 0;
         if(far) {
-            switch (arr.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0)) {
+            res = indexOfMaxOrMin(arr, false);
+            switch (res) {
                 case 0:
                     ghost_object.j--;
                     break;
@@ -460,7 +467,8 @@ $( document ).ready(function() {
             }
         }
         else{
-            switch (arr.reduce((iMin, x, i, arr) => x > arr[iMin] ? i : iMin, 999)) {
+            res = indexOfMaxOrMin(arr, true);
+            switch (res) {
                 case 0:
                     ghost_object.j--;
                     break;
@@ -482,6 +490,43 @@ $( document ).ready(function() {
     function ManhattanDist(p1_x,p1_y,p2_x,p2_y){
         return Math.abs(p1_x-p2_x) + Math.abs(p1_y-p2_y);
     }
+
+    function indexOfMaxOrMin(arr, minimum) {
+        if (arr.length === 0) {
+            return -1;
+        }
+
+        var store = arr[0];
+        var maxIndex = 0;
+        for(var i = 0; i < arr.length; i++) {
+            if (arr[i] != -1) {
+                store = arr[i];
+                maxIndex = i;
+                break;
+            }
+        }
+
+
+        for (var i = 0; i < arr.length; i++) {
+            if(arr[i] == -1) continue;
+            if(!minimum) {
+                if (arr[i] > store) {
+                    maxIndex = i;
+                    store = arr[i];
+                }
+            }
+            else
+            {
+                if (arr[i] < store) {
+                    maxIndex = i;
+                    store = arr[i];
+                }
+            }
+        }
+
+        return maxIndex;
+    }
+
     function sound(src) {
         this.sound = document.createElement("audio");
         this.sound.src = src;
