@@ -218,7 +218,97 @@ a {
   color: red;
   padding: 20px;
 }
-.button5 {border-radius: 50%;}
+div.settings {
+  font-size: 18px;
+}
+.button1{  border: none;  padding: 20px;  text-align: center;  cursor: pointer;
+  margin: 5px;  width: 50%;border-radius: 12px;
+  background-color: goldenrod;
+  border-collapse: collapse;}
 .button1:hover {
-  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+  box-shadow: 0 8px 12px 0 rgba(0,0,0,0.24), 0 15px 20px 0 rgba(0,0,0,0.19);
+}
+input[type=number] {
+  border: 2px solid black;
+  border-radius: 4px;
+
+}
+.button0 {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 20px;
+  padding: 16px;
+  width: 160px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.button0 span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button0 span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button0:hover span {
+  padding-right: 25px;
+}
+
+.button0:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+.button2 {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 15px;
+  padding: 16px;
+  width: 160px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.button2 span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button2 span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button2:hover span {
+  padding-right: 25px;
+}
+
+.button2:hover span:after {
+  opacity: 1;
+  right: 0;
 }

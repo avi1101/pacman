@@ -452,7 +452,7 @@ $( document ).ready(function() {
     }
 
     function semi_randomMove(ghost_object){
-        var rand = Math.random();
+        const rand = Math.random();
         if(rand < 0.05) randomMove(ghost_object);
         else if(rand<0.8)
             bestWay2pacMan(ghost_object,false);

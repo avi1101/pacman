@@ -16,7 +16,6 @@ $( document ).ready(function() {
         gametime = $('#gametime').val();
         if (gametime < 60)
             gametime = 60;
-
         nummonsters = $('#nummonsters').val();
         if (nummonsters < 1 || nummonsters > 3)
             nummonsters = 2;
