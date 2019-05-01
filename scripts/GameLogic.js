@@ -22,7 +22,6 @@ $( document ).ready(function() {
     var h = window.innerHeight;
     var ob_size = 0;
     var mouth = 0;
-    var upKey = "38";
     var food_remain = 20;
     var status = 0; //0 - not started, 1 - on going, 2 - win, 3 - lose, 4 = draw
     var ghosts = [new Image(),new Image(),new Image()], gs = [g1, g2, g3];
@@ -33,9 +32,13 @@ $( document ).ready(function() {
     ghosts[0].src = "images/blue_ghost.gif";
     ghosts[1].src = "images/pink_ghost.gif";
     ghosts[2].src = "images/red_ghost.gif";
-    g1.img = ghosts[0];
-    g2.img = ghosts[1];
-    g3.img = ghosts[2];
+    g1.img = ghosts[0]; g1.direction = 1; //1 - right, 0 - left
+    g2.img = ghosts[1]; g2.direction = 1;
+    g3.img = ghosts[2]; g3.direction = 1;
+    g1.fimg = new Image();
+    g2.fimg = new Image();
+    g3.fimg = new Image();
+    shape.direction = 1;
     //ghost4.src = "images/yellow_ghost.gif";
     var stack = [];
     var stack_ghosts = [];
@@ -55,20 +58,22 @@ $( document ).ready(function() {
             stack_ghosts.push(gs[i]);
         }
     }
-    // 0 - nothing, 1 - food, 2 - pacman, 3 - ghost, 4 - wall, 5 - fruit, 6 - poison, 7 - moving bonus, 8 - mega fruit
+    // 0 - nothing, 4 - food, 2 - pacman, 3 - ghost, 1 - wall, 5 - fruit, 6 - poison, 7 - moving bonus, 8 - mega fruit
     // food =       5 points
     // fruit =      15 points
     // mega fruit = 25 points
     function Start() {
         // w = window.innerWidth/2;
         // h = window.innerHeight/2;
-        h = window.screen.height*0.7;
-        timeleft = 0;
+        lives = 3;
+
+        monsters = nummonsters;
+        timeleft = gametime;
+        food_remain = numballs;
+        h = window.screen.height*0.6;
         board = getRandomBoard();
         status = score = 0;
         pac_color = "yellow";
-        var cnt = 100;
-        food_remain = 60;
         var pacman_remain = 1;
         canvas.height = h;
         canvas.width = h;
@@ -100,17 +105,40 @@ $( document ).ready(function() {
             else
                 board[pos[0]][pos[1]] = 5;
         }
+        var f5 = food_remain*6/10;
+        var f15 = food_remain*3/10;
+        var f25 = food_remain*1/10;
         while (food_remain > 0) {
-            var emptyCell = findRandomEmptyCell(board);
-            board[emptyCell[0]][emptyCell[1]] = 4;
-            food_remain--;
+            while(f5 > 0)
+            {
+                var emptyCell = findRandomEmptyCell(board);
+                board[emptyCell[0]][emptyCell[1]] = 4;
+                food_remain--;
+                f5--;
+            }
+            while(f15 > 0)
+            {
+                var emptyCell = findRandomEmptyCell(board);
+                board[emptyCell[0]][emptyCell[1]] = 5;
+                food_remain--;
+                f15--;
+            }
+            while(f25 > 0)
+            {
+                var emptyCell = findRandomEmptyCell(board);
+                board[emptyCell[0]][emptyCell[1]] = 8;
+                food_remain--;
+                f25--;
+            }
+            if(food_remain > 0) f5 = food_remain;
+
         }
         board_copy = new Array();
         for(var i = 0; i < height; i++)
         {
             board_copy[i] = new Array();
             for(var j = 0; j < width; j++)
-                if(board[i][j] == 4)
+                if(board[i][j] >= 4)
                     board_copy[i][j] = board[i][j];
                 else
                     board_copy[i][j] = 0;
@@ -149,16 +177,16 @@ $( document ).ready(function() {
      * @return {number}
      */
     function GetKeyPressed() {
-        if (keysDown['ArrowUp']) {
+        if (keysDown[upkey]) {
             return 1;
         }
-        if (keysDown['ArrowDown']) {
+        if (keysDown[downkey]) {
             return 2;
         }
-        if (keysDown['ArrowLeft']) {
+        if (keysDown[leftkey]) {
             return 3;
         }
-        if (keysDown['ArrowRight']) {
+        if (keysDown[rightkey]) {
             return 4;
         }
     }
@@ -193,7 +221,17 @@ $( document ).ready(function() {
                 } else if (board[i][j] === 4) {
                     context.beginPath();
                     context.arc(center.x, center.y, ob_size/4, 0, 2 * Math.PI); // circle
-                    context.fillStyle = "white"; //color
+                    context.fillStyle = color5; //color
+                    context.fill();
+                } else if (board[i][j] === 5) {
+                    context.beginPath();
+                    context.arc(center.x, center.y, ob_size/4, 0, 2 * Math.PI); // circle
+                    context.fillStyle = color15; //color
+                    context.fill();
+                } else if (board[i][j] === 8) {
+                    context.beginPath();
+                    context.arc(center.x, center.y, ob_size/4, 0, 2 * Math.PI); // circle
+                    context.fillStyle = color25; //color
                     context.fill();
                 } else if (board[i][j] === 1) {
                     context.beginPath();
@@ -207,6 +245,8 @@ $( document ).ready(function() {
                     // context.fillStyle = "purple"; //color
                     // context.fill();
                     var ghost = getGhost(i, j);
+                    //if(ghost.direction = 0)
+
                     context.drawImage(ghost.img,0,0,ghost.img.width,ghost.img.height,center.x-ob_size/2,center.y-ob_size/2,ob_size,ob_size);
                     stack_ghosts.push(ghost);
                 } else if (board[i][j] === 5){
@@ -240,7 +280,7 @@ $( document ).ready(function() {
     keysDown['ArrowRight'] = 4
      */
     function UpdatePosition() {
-        board[shape.i][shape.j] = 0;
+        board_copy[shape.i][shape.j] = board[shape.i][shape.j] = 0;
         var x = GetKeyPressed();
         if (x === 1) {
             if (shape.j > 0 && board[shape.i][shape.j - 1] !== 1) {
@@ -263,7 +303,13 @@ $( document ).ready(function() {
             }
         }
         if (board[shape.i][shape.j] === 4) {
-            score++;
+            score += 5;
+        }
+        if (board[shape.i][shape.j] === 5) {
+            score += 15;
+        }
+        if (board[shape.i][shape.j] === 8) {
+            score += 25;
         }
         if(board[shape.i][shape.j] == 3)
         {
@@ -278,7 +324,9 @@ $( document ).ready(function() {
         }
         else board[shape.i][shape.j] = 2;
         var currentTime = new Date();
-        time_elapsed = (currentTime - start_time) / 1000;
+        time_elapsed = gametime - ((currentTime - start_time) / 1000);
+        if(time_elapsed == 0)
+            status = 3;
         time_elapsed = secondsToHms(~~time_elapsed);
         for(var i = 0; i < monsters && ghost_delay == 0; i++)
         {
@@ -289,15 +337,15 @@ $( document ).ready(function() {
             }
         }
         if(ghost_delay == 0)
-            ghost_delay = 1;
+            ghost_delay = 2;
         else
             ghost_delay--;
         if (score >= 20 && time_elapsed <= 10) {
             pac_color = "green";
         }
-        if (score === 50) {
+        if (score === (numballs*6/10)*5+(numballs*3/10)*15+(numballs*1/10)*25 - 25) {
             window.clearInterval(interval);
-            window.alert("Game completed");
+            window.alert("You Win!");
         }
         else if(status == 3) {
             window.clearInterval(interval);

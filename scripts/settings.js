@@ -1,11 +1,13 @@
-var numballs = 50;
+var numballs = 60;
 var gametime = 60;
 var nummonsters = 2;
 var upkey='ArrowUp';
 var downkey ='ArrowDown';
 var rightkey ='ArrowRight';
 var leftkey ='ArrowLeft';
-
+var color5 = "white";
+var color15 = "orange";
+var color25 = "red";
 $( document ).ready(function() {
     $("#done").click(function () {
 
@@ -33,6 +35,9 @@ $( document ).ready(function() {
          color25 = "#"+Math.floor(Math.random()*16777215).toString(16);
          **/
         // what now?
+        color5 = $('#cp5').val();
+        color15 = $('#cp15').val();
+        color25 = $('#cp25').val();
     });
     $("#randomVals").click(function () {
         numballs = Math.floor((Math.random() * 40) + 50);
@@ -41,6 +46,9 @@ $( document ).ready(function() {
         color5 = "#" + Math.floor(Math.random() * 16777215).toString(16);
         color15 = "#" + Math.floor(Math.random() * 16777215).toString(16);
         color25 = "#" + Math.floor(Math.random() * 16777215).toString(16);
+        document.getElementById("5color").value = color5;
+        document.getElementById("15color").value = color15;
+        document.getElementById("25color").value = color25;
         upkey= 'ArrowUp'; downkey ='ArrowDown'; rightkey ='ArrowRight';leftkey ='ArrowLeft';
         //what now?
     });
