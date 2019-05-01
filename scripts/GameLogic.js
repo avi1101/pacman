@@ -1,16 +1,17 @@
+var interval = null;
+var context = null;
+var timeleft = 0;
+var lives = 3;
+var score = 0;
+var time_elapsed = 0;
 $( document ).ready(function() {
-    var context = canvas.getContext("2d");
     //var context2 = canvas1.getContext("2d");
     var shape = new Object(), g1 = new Object(), g2 = new Object(), g3 = new Object();
     var board = [];
     var board_copy = [];
-    var score;
     var pac_color;
     var start_time;
-    var time_elapsed;
-    var interval = null;
     var login = false;
-    var timeleft = 0;
     var downloadTimer = null;
     var monsters = 3;
     var pacman_pos = [];
@@ -25,9 +26,9 @@ $( document ).ready(function() {
     var food_remain = 20;
     var status = 0; //0 - not started, 1 - on going, 2 - win, 3 - lose, 4 = draw
     var ghosts = [new Image(),new Image(),new Image()], gs = [g1, g2, g3];
-    var lives = 3;
     var ghost_delay = 1;
     var random_straight_walk = 0;
+    context = canvas.getContext("2d");
     //var ghost4 = new Image();
     ghosts[0].src = "images/blue_ghost.gif";
     ghosts[1].src = "images/pink_ghost.gif";
@@ -618,7 +619,18 @@ $( document ).ready(function() {
         }
     }
 });
-
+function StopGame()
+{
+    if(interval != null)
+        clearInterval(interval);
+    lives = 3;
+    time_elapsed = 0;
+    score = 0;
+    context.clearRect(0, 0, canvas.width, canvas.height); //clean board
+    lblScore.innerText = "Score:\t"+score;
+    lblTime.innerText = "Time:\t"+time_elapsed;
+    life.innerText = "Lives:\t"+lives;
+}
 /**
 
  [0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
