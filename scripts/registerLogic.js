@@ -1,14 +1,7 @@
 var users ={};
 users['a']={password: "a", firstName: "a", lastName: "a", email: "a@a.a.il", birthday: "01/01/70"};
 var login = false;
-
-function foo(){
-    alert("works");
-    var x = document.getElementById("email").value;
-    if(x == "a")
-        return true;
-    return false;
-}
+var logged_name = "";
 
 $( document ).ready(function() {
     $('#reg1').submit(function(e){
@@ -66,6 +59,7 @@ function check_password(username,password)
     {
         login = false;
         document.getElementById("loginbtn").innerText = "Login";
+        name_title.innerText = "";
         return;
     }
     if((username in users && users[username].password=== password))
@@ -77,7 +71,9 @@ function check_password(username,password)
     }
     else
         {
+            logged_name = users[username].firstName+" "+users[username].lastName;
             document.getElementById("loginbtn").innerText = "Disconnect";
+            name_title.innerText = "Welcome "+users[username].firstName+" "+users[username].lastName+"!";
             OpenGame();
         }
 }

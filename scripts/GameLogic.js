@@ -55,7 +55,10 @@ $( document ).ready(function() {
             stack_ghosts.push(gs[i]);
         }
     }
-
+    // 0 - nothing, 1 - food, 2 - pacman, 3 - ghost, 4 - wall, 5 - fruit, 6 - poison, 7 - moving bonus, 8 - mega fruit
+    // food =       5 points
+    // fruit =      15 points
+    // mega fruit = 25 points
     function Start() {
         // w = window.innerWidth/2;
         // h = window.innerHeight/2;

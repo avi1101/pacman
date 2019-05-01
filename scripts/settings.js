@@ -1,5 +1,6 @@
 var numballs = 0;
-
+var input_food = 60;
+var input_monsters= 3;
 $( document ).ready(function() {
     $("#done").click(function () {
 
