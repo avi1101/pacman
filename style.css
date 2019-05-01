@@ -1,9 +1,9 @@
 * {box-sizing: border-box;}
-
 body { 
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   text-align: center;
+
 }
 
 form {
@@ -219,6 +219,8 @@ a {
   padding: 20px;
 }
 div.settings {
+  background:  #111111;
+  color: whitesmoke;
   font-size: 18px;
 }
 .button1{  border: none;  padding: 20px;  text-align: center;  cursor: pointer;

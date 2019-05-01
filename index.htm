@@ -13,7 +13,7 @@
 <br/><br/><br/><br/><br/><br/>
 <body>
 <audio id="audioContainer">
-    <source src="audio/music.mp3" type="audio/mpeg">
+    <source src="audio/music.mp3" autoplay>
 </audio>
 
     <div class="header">                            <!------- Header DIV here --------->
@@ -44,13 +44,13 @@
     <div class="settings" id="settings" style="display:none;">               <!------- Settings DIV here --------->
         <form>
             Up Button:
-            <input type="button" class="button button1" value="set Up movement" onclick=" upkey = updateUp()"><br><br>
+            <input type="button" class=" button1" value="set Up movement" onclick=" upkey = updateUp()"><br><br>
             Down Button:
-            <input type="button" class="button button1" value="set Down movement" onclick="downkey = updateDown()"><br><br>
+            <input type="button" class=" button1" value="set Down movement" onclick="downkey = updateDown()"><br><br>
             Left Button:
-            <input type="button" class="button button1" value="set Left movement" onclick="leftkey = updateLeft()"><br><br>
+            <input type="button" class=" button1" value="set Left movement" onclick="leftkey = updateLeft()"><br><br>
             Right Button:
-            <input type="button" class="button button1" value="set Right movement" onclick="rightkey = updateRight()"><br><br>
+            <input type="button" class=" button1" value="set Right movement" onclick="rightkey = updateRight()"><br><br>
             <label for="numballs">number of balls (between 50 and 90):</label>
             <input type="number" id="numballs" name="numballs" min="50" max="90"> <br><br>
             <label for="gametime">length of game in sec (min 60):</label>
@@ -63,8 +63,8 @@
             <input type="color" name="15color" value="#663300"><br><br>
             <label>Select 25 point balls color:</label>
              <input type="color" name="25color" value="#66ff66"><br><br>
-            <button class="button button2"  style="vertical-align:middle" onclick="randomVals();"><span>random values</span></button>
-            <button type="button"  style="vertical-align:middle" class="button button0" id="done"><span>Start!</span></button>
+            <button class=" button2"  style="vertical-align:middle" onclick="randomVals();"><span>random values</span></button>
+            <button type="button"  style="vertical-align:middle" class=" button0" id="done"><span>Start!</span></button>
         </form>
 
     </div>

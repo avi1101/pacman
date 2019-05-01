@@ -2,12 +2,14 @@ var interval = null;
 var context = null;
 var timeleft = 0;
 var lives = 3;
+var sound = null;
 var score = 0;
 var time_elapsed = 0;
 $( document ).ready(function() {
     //var context2 = canvas1.getContext("2d");
     var shape = new Object(), g1 = new Object(), g2 = new Object(), g3 = new Object();
     var board = [];
+    setMusic()
     var board_copy = [];
     var pac_color;
     var start_time;
@@ -57,6 +59,7 @@ $( document ).ready(function() {
     }
 
     function Start() {
+        sound.play();
         // w = window.innerWidth/2;
         // h = window.innerHeight/2;
         h = window.screen.height*0.7;
@@ -604,23 +607,11 @@ $( document ).ready(function() {
         return maxIndex;
     }
 
-    function sound(src) {
-        this.sound = document.createElement("audio");
-        this.sound.src = src;
-        this.sound.setAttribute("preload", "auto");
-        this.sound.setAttribute("controls", "none");
-        this.sound.style.display = "none";
-        document.body.appendChild(this.sound);
-        this.play = function(){
-            this.sound.play();
-        }
-        this.stop = function(){
-            this.sound.pause();
-        }
-    }
+
 });
 function StopGame()
 {
+    sound.pause();
     if(interval != null)
         clearInterval(interval);
     lives = 3;
@@ -630,6 +621,17 @@ function StopGame()
     lblScore.innerText = "Score:\t"+score;
     lblTime.innerText = "Time:\t"+time_elapsed;
     life.innerText = "Lives:\t"+lives;
+}
+function setMusic() {
+    sound = document.createElement('audio');
+    sound.setAttribute('src', "audio/music.mp3");
+    sound.volume = 0.2;
+}
+function stopMusic() {
+    if (null !== sound) {
+        sound.pause();
+        sound.currentTime = 0;
+    }
 }
 /**
 
