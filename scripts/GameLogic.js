@@ -2,12 +2,14 @@ var interval = null;
 var context = null;
 var timeleft = 0;
 var lives = 3;
+var sound = null;
 var score = 0;
 var time_elapsed = 0;
 $( document ).ready(function() {
     //var context2 = canvas1.getContext("2d");
     var shape = new Object(), g1 = new Object(), g2 = new Object(), g3 = new Object();
     var board = [];
+    setMusic()
     var board_copy = [];
     var pac_color;
     var start_time;
@@ -35,9 +37,9 @@ $( document ).ready(function() {
     g1.img = ghosts[0]; g1.direction = 1; //1 - right, 0 - left
     g2.img = ghosts[1]; g2.direction = 1;
     g3.img = ghosts[2]; g3.direction = 1;
-    g1.fimg = new Image();
-    g2.fimg = new Image();
-    g3.fimg = new Image();
+    g1.fimg = new Image(); g1.fimg.src = "images/blue_ghost_rotateX.gif";
+    g2.fimg = new Image(); g2.fimg.src = "images/pink_ghost_rotateX.gif";
+    g3.fimg = new Image(); g3.fimg.src = "images/red_ghost_rotateX.gif";
     shape.direction = 1;
     //ghost4.src = "images/yellow_ghost.gif";
     var stack = [];
@@ -63,6 +65,7 @@ $( document ).ready(function() {
     // fruit =      15 points
     // mega fruit = 25 points
     function Start() {
+        sound.play();
         // w = window.innerWidth/2;
         // h = window.innerHeight/2;
         lives = 3;
@@ -245,9 +248,12 @@ $( document ).ready(function() {
                     // context.fillStyle = "purple"; //color
                     // context.fill();
                     var ghost = getGhost(i, j);
-                    //if(ghost.direction = 0)
-
-                    context.drawImage(ghost.img,0,0,ghost.img.width,ghost.img.height,center.x-ob_size/2,center.y-ob_size/2,ob_size,ob_size);
+                    var img;
+                    if(ghost.direction == 1)
+                        img = ghost.img;
+                    else
+                        img = ghost.fimg;
+                    context.drawImage(img,0,0,ghost.img.width,ghost.img.height,center.x-ob_size/2,center.y-ob_size/2,ob_size,ob_size);
                     stack_ghosts.push(ghost);
                 } else if (board[i][j] === 5){
                     context.beginPath();
@@ -278,6 +284,7 @@ $( document ).ready(function() {
     keysDown['ArrowDown'] = 2
     keysDown['ArrowLeft'] = 3
     keysDown['ArrowRight'] = 4
+    directions: 1 = right, 0 = left, 3 = down, 2 = up
      */
     function UpdatePosition() {
         board_copy[shape.i][shape.j] = board[shape.i][shape.j] = 0;
@@ -285,21 +292,25 @@ $( document ).ready(function() {
         if (x === 1) {
             if (shape.j > 0 && board[shape.i][shape.j - 1] !== 1) {
                 shape.j--;
+                shape.direction = 3;
             }
         }
         if (x === 2) {
             if (shape.j < height-1 && board[shape.i][shape.j + 1] !== 1) {
                 shape.j++;
+                shape.direction = 2;
             }
         }
         if (x === 3) {
             if (shape.i > 0 && board[shape.i - 1][shape.j] !== 1) {
                 shape.i--;
+                shape.direction = 1;
             }
         }
         if (x === 4) {
             if (shape.i < width-1 && board[shape.i + 1][shape.j] !== 1) {
                 shape.i++;
+                shape.direction = 0;
             }
         }
         if (board[shape.i][shape.j] === 4) {
@@ -492,18 +503,22 @@ $( document ).ready(function() {
         }
         else if(rand<0.75){
             if (moving_object.i > 0 && board[moving_object.i - 1][moving_object.j] !== 1
-                && board[moving_object.i - 1][moving_object.j] !== 3)
+                && board[moving_object.i - 1][moving_object.j] !== 3) {
                 moving_object.i--;
+                moving_object.direction = 1;
+            }
         }
         else{
             if (moving_object.i < width-1 && board[moving_object.i + 1][moving_object.j] !== 1
-                && board[moving_object.i + 1][moving_object.j] !== 3)
+                && board[moving_object.i + 1][moving_object.j] !== 3) {
                 moving_object.i++;
+                moving_object.direction = 0;
+            }
         }
     }
 
     function semi_randomMove(ghost_object){
-        var rand = Math.random();
+        const rand = Math.random();
         if(rand < 0.05) randomMove(ghost_object);
         else if(rand<0.8)
             bestWay2pacMan(ghost_object,false);
@@ -537,9 +552,11 @@ $( document ).ready(function() {
                     break;
                 case 2:
                     ghost_object.i--;
+                    ghost_object.direction = 1;
                     break;
                 case 3:
                     ghost_object.i++;
+                    ghost_object.direction = 0;
                     break;
             }
         }
@@ -554,9 +571,11 @@ $( document ).ready(function() {
                     break;
                 case 2:
                     ghost_object.i--;
+                    ghost_object.direction = 1;
                     break;
                 case 3:
                     ghost_object.i++;
+                    ghost_object.direction = 0;
                     break;
             }
         }
@@ -655,23 +674,11 @@ $( document ).ready(function() {
         return maxIndex;
     }
 
-    function sound(src) {
-        this.sound = document.createElement("audio");
-        this.sound.src = src;
-        this.sound.setAttribute("preload", "auto");
-        this.sound.setAttribute("controls", "none");
-        this.sound.style.display = "none";
-        document.body.appendChild(this.sound);
-        this.play = function(){
-            this.sound.play();
-        }
-        this.stop = function(){
-            this.sound.pause();
-        }
-    }
+
 });
 function StopGame()
 {
+    sound.pause();
     if(interval != null)
         clearInterval(interval);
     lives = 3;
@@ -681,6 +688,17 @@ function StopGame()
     lblScore.innerText = "Score:\t"+score;
     lblTime.innerText = "Time:\t"+time_elapsed;
     life.innerText = "Lives:\t"+lives;
+}
+function setMusic() {
+    sound = document.createElement('audio');
+    sound.setAttribute('src', "audio/music.mp3");
+    sound.volume = 0.2;
+}
+function stopMusic() {
+    if (null !== sound) {
+        sound.pause();
+        sound.currentTime = 0;
+    }
 }
 /**
 
