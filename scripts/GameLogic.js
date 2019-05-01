@@ -26,6 +26,8 @@ $( document ).ready(function() {
     var status = 0; //0 - not started, 1 - on going, 2 - win, 3 - lose, 4 = draw
     var ghosts = [new Image(),new Image(),new Image()], gs = [g1, g2, g3];
     var lives = 3;
+    var ghost_delay = 1;
+    var random_straight_walk = 0;
     //var ghost4 = new Image();
     ghosts[0].src = "images/blue_ghost.gif";
     ghosts[1].src = "images/pink_ghost.gif";
@@ -116,7 +118,7 @@ $( document ).ready(function() {
         addEventListener("keyup", function (e) {
             keysDown[e.code] = false;
         }, false);
-        interval = setInterval(UpdatePosition, 150);
+        interval = setInterval(UpdatePosition, 100);
     }
 
     function findRandomEmptyCell(board) {
@@ -267,20 +269,25 @@ $( document ).ready(function() {
                 status = 3;
             else
             {
-                var pos = findRandomEmptyCell(board);
-                board[pos[0]][pos[1]] = 2;
-                shape.i = pos[0];
-                shape.j = pos[1];
+                GhostEatPacman();
             }
         }
         else board[shape.i][shape.j] = 2;
         var currentTime = new Date();
         time_elapsed = (currentTime - start_time) / 1000;
         time_elapsed = secondsToHms(~~time_elapsed);
-        for(var i = 0; i < monsters; i++)
+        for(var i = 0; i < monsters && ghost_delay == 0; i++)
         {
             ghostMove(stack_ghosts[i]);
+            if(stack_ghosts[i].i == shape.i && stack_ghosts[i].j == shape.j)
+            {
+                GhostEatPacman();
+            }
         }
+        if(ghost_delay == 0)
+            ghost_delay = 1;
+        else
+            ghost_delay--;
         if (score >= 20 && time_elapsed <= 10) {
             pac_color = "green";
         }
@@ -295,6 +302,21 @@ $( document ).ready(function() {
         else {
             Draw();
         }
+    }
+
+    function GhostEatPacman()
+    {
+        lives--;
+        if(lives < 0)
+            status = 3;
+        else
+        {
+            var pos = findRandomEmptyCell(board);
+            board[pos[0]][pos[1]] = 2;
+            shape.i = pos[0];
+            shape.j = pos[1];
+        }
+
     }
 
     function ghostMove(ghost)
@@ -406,20 +428,24 @@ $( document ).ready(function() {
     function randomMove(moving_object) {
         var rand=Math.random();
         if(rand<0.25){
-            if (moving_object.j > 0 && board[moving_object.i][moving_object.j - 1] !== 1) {
+            if (moving_object.j > 0 && board[moving_object.i][moving_object.j - 1] !== 1
+                && board[moving_object.i][moving_object.j - 1] !== 3) {
                 moving_object.j--;
             }
         }
         else if(rand<0.5){
-            if (moving_object.j < height-1 && board[moving_object.i][moving_object.j + 1] !== 1)
+            if (moving_object.j < height-1 && board[moving_object.i][moving_object.j + 1] !== 1
+                && board[moving_object.i][moving_object.j + 1] !== 3)
                 moving_object.j++;
         }
         else if(rand<0.75){
-            if (moving_object.i > 0 && board[moving_object.i - 1][moving_object.j] !== 1)
+            if (moving_object.i > 0 && board[moving_object.i - 1][moving_object.j] !== 1
+                && board[moving_object.i - 1][moving_object.j] !== 3)
                 moving_object.i--;
         }
         else{
-            if (moving_object.i < width-1 && board[moving_object.i + 1][moving_object.j] !== 1)
+            if (moving_object.i < width-1 && board[moving_object.i + 1][moving_object.j] !== 1
+                && board[moving_object.i + 1][moving_object.j] !== 3)
                 moving_object.i++;
         }
     }
@@ -427,7 +453,7 @@ $( document ).ready(function() {
     function semi_randomMove(ghost_object){
         var rand = Math.random();
         if(rand < 0.05) randomMove(ghost_object);
-        else if(rand<0.7)
+        else if(rand<0.8)
             bestWay2pacMan(ghost_object,false);
         else
             bestWay2pacMan(ghost_object,true);
@@ -435,18 +461,17 @@ $( document ).ready(function() {
 
     function bestWay2pacMan(ghost_object,far) {
         var arr = [-1,-1,-1,-1];
-        var index = 0;
-        // var wall1 = board[ghost_object.i][ghost_object.j - 1];
-        // var wall2 = board[ghost_object.i][ghost_object.j + 1];
-        // var wall3 = board[ghost_object.i - 1][ghost_object.j];
-        // var wall4 = board[ghost_object.i + 1][ghost_object.j];
-        if (ghost_object.j > 0 && board[ghost_object.i][ghost_object.j - 1] != 1)
+        if (ghost_object.j > 0 && board[ghost_object.i][ghost_object.j - 1] != 1
+            && board[ghost_object.i][ghost_object.j - 1] != 3)
             arr[0] = ManhattanDist(ghost_object.i, ghost_object.j - 1, shape.i, shape.j);
-        if (ghost_object.j < height - 1 && board[ghost_object.i][ghost_object.j + 1] != 1)
+        if (ghost_object.j < height - 1 && board[ghost_object.i][ghost_object.j + 1] != 1
+            && board[ghost_object.i][ghost_object.j + 1] != 3)
             arr[1] = ManhattanDist(ghost_object.i, ghost_object.j + 1, shape.i, shape.j);
-        if (ghost_object.i > 0 && board[ghost_object.i - 1][ghost_object.j] != 1)
+        if (ghost_object.i > 0 && board[ghost_object.i - 1][ghost_object.j] != 1
+            && board[ghost_object.i - 1][ghost_object.j] != 3)
             arr[2] = ManhattanDist(ghost_object.i - 1, ghost_object.j, shape.i, shape.j);
-        if (ghost_object.i < width - 1 && board[ghost_object.i + 1][ghost_object.j] != 1)
+        if (ghost_object.i < width - 1 && board[ghost_object.i + 1][ghost_object.j] != 1
+            && board[ghost_object.i + 1][ghost_object.j] != 3)
             arr[3] = ManhattanDist(ghost_object.i + 1, ghost_object.j, shape.i, shape.j);
         var res = 0;
         if(far) {
@@ -490,6 +515,57 @@ $( document ).ready(function() {
     function ManhattanDist(p1_x,p1_y,p2_x,p2_y){
         return Math.abs(p1_x-p2_x) + Math.abs(p1_y-p2_y);
     }
+
+    function GhostBFS(ghost_object) {
+        // var matrix = new Array();
+        // for(var i = 0; i < board.length; i++)
+        // {
+        //     matrix = new Array();
+        //     for(var j = 0; j < board[i].length; j++)
+        //         matrix[i][j] = board[i][j];
+        // }
+        var path = findWay([ghost_object.i, ghost_object.j],[shape.i, shape.j], board);
+        ghost_object.i = path[0];
+        ghost_object.j = path[1];
+    }
+    function findWay(position, end, matrix) {
+        var queue = [];
+
+        //matrix[position[0]][position[1]] = 1;
+        queue.push([position]); // store a path, not just a position
+
+        while (queue.length > 0) {
+            var path = queue.shift(); // get the path out of the queue
+            var pos = path[path.length-1]; // ... and then the last position from it
+            var direction = [
+                [pos[0] + 1, pos[1]],
+                [pos[0], pos[1] + 1],
+                [pos[0] - 1, pos[1]],
+                [pos[0], pos[1] - 1]
+            ];
+
+            for (var i = 0; i < direction.length; i++) {
+                // Perform this check first:
+                if (direction[i][0] == end[0] && direction[i][1] == end[1]) {
+                    // return the path that led to the find
+                    return path.concat([end]);
+                }
+
+                if (direction[i][0] < 0 || direction[i][0] >= matrix[0].length
+                    || direction[i][1] < 0 || direction[i][1] >= matrix[0].length
+                    || matrix[direction[i][0]][direction[i][1]] == 4
+                    || matrix[direction[i][0]][direction[i][1]] == 3) {
+                    continue;
+                }
+
+                //matrix[direction[i][0]][direction[i][1]] = 1;
+                // extend and push the path on the queue
+                return direction[i];
+                queue.push(path.concat([direction[i]]));
+            }
+        }
+    }
+
 
     function indexOfMaxOrMin(arr, minimum) {
         if (arr.length === 0) {
