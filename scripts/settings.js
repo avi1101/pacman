@@ -1,18 +1,23 @@
-var numballs = 0;
-var input_food = 60;
-var input_monsters= 3;
+var numballs = 50;
+var gametime = 60;
+var nummonsters = 2;
+var upkey='ArrowUp';
+var downkey ='ArrowDown';
+var rightkey ='ArrowRight';
+var leftkey ='ArrowLeft';
+
 $( document ).ready(function() {
     $("#done").click(function () {
 
-        var numballs = $('#numballs').val();
+        numballs = $('#numballs').val();
         if (numballs < 50 || numballs > 90)
             numballs = (90 + 50) / 2;
 
-        var gametime = $('#gametime').val();
+        gametime = $('#gametime').val();
         if (gametime < 60)
             gametime = 60;
 
-        var nummonsters = $('#nummonsters').val();
+        nummonsters = $('#nummonsters').val();
         if (nummonsters < 1 || nummonsters > 3)
             nummonsters = 2;
         /**
@@ -31,12 +36,12 @@ $( document ).ready(function() {
     });
     $("#randomVals").click(function () {
         numballs = Math.floor((Math.random() * 40) + 50);
-        var gametime = Math.floor((Math.random() * 300) + 60);
-        var nummonsters = Math.random() * 1000 + 60;
-        var color5 = "#" + Math.floor(Math.random() * 16777215).toString(16);
-        var color15 = "#" + Math.floor(Math.random() * 16777215).toString(16);
-        var color25 = "#" + Math.floor(Math.random() * 16777215).toString(16);
-
+        gametime = Math.floor((Math.random() * 300) + 60);
+        nummonsters = Math.random() * 1000 + 60;
+        color5 = "#" + Math.floor(Math.random() * 16777215).toString(16);
+        color15 = "#" + Math.floor(Math.random() * 16777215).toString(16);
+        color25 = "#" + Math.floor(Math.random() * 16777215).toString(16);
+        upkey= 'ArrowUp'; downkey ='ArrowDown'; rightkey ='ArrowRight';leftkey ='ArrowLeft';
         //what now?
     });
 
@@ -59,3 +64,30 @@ $( document ).ready(function() {
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ];
 });
+
+function updateUp() {
+    $(document).keydown(function(event){
+
+        upkey =  event.key;
+        $(document).unbind()
+    });
+}
+function updateDown() {
+    $(document).keydown(function(event){
+        downkey =  (event.key);
+        $(document).unbind()
+    });
+}
+function updateLeft() {
+    $(document).keydown(function(event){
+        leftkey =  (event.key);
+        $(document).unbind()
+    });
+}
+function updateRight() {
+    $(document).keydown(function(event){
+        rightkey =  (event.key);
+        $(document).unbind()
+    });
+
+}

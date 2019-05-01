@@ -12,6 +12,10 @@
 </head>
 <br/><br/><br/><br/><br/><br/>
 <body>
+<audio id="audioContainer">
+    <source src="audio/music.mp3" type="audio/mpeg">
+</audio>
+
     <div class="header">                            <!------- Header DIV here --------->
         <a href="#top" class="logo"><img src="images/pcgif.gif" height="40" width="85" id="logoimg"/></a>
         <div class="header-right">
@@ -40,13 +44,13 @@
     <div id="settings" style="display:none;">               <!------- Settings DIV here --------->
         <form>
             UpButton:
-            <input type="button" value="set Up movement" onclick=" upkey = updateUp()"><br><br>
+            <input type="button" class="button button1" value="set Up movement" onclick=" upkey = updateUp()"><br><br>
             DownButton:
-            <input type="button" value="set Down movement" onclick="downkey = updateDown()"><br><br>
+            <input type="button" class="button button1" value="set Down movement" onclick="downkey = updateDown()"><br><br>
             LeftButton:
-            <input type="button" value="set Left movement" onclick="leftkey = updateLeft()"><br><br>
+            <input type="button" class="button button1" value="set Left movement" onclick="leftkey = updateLeft()"><br><br>
             RightButton:
-            <input type="button" value="set Right movement" onclick="rightkey = updateRight()"><br><br>
+            <input type="button" class="button button1" value="set Right movement" onclick="rightkey = updateRight()"><br><br>
             <label for="numballs">number of balls (between 50 and 90):</label>
             <input type="number" id="numballs" name="numballs" min="50" max="90"> <br><br>
             <label for="gametime">length of game in sec (min 60):</label>
@@ -59,9 +63,7 @@
             <input type="color" name="15color" value="#663300"><br><br>
             <label>Select 25 point balls color:</label>
              <input type="color" name="25color" value="#66ff66"><br><br>
-            <button class="button button5" onclick="randomVals();
-            upkey= 'ArrowUp'; downkey ='ArrowDown'; rightkey ='ArrowRight';leftkey ='ArrowLeft';">random values</button>
-
+            <button class="button button5" onclick="randomVals();">random values</button>
             <button type="button" id="done">Start!</button>
         </form>
 
@@ -97,7 +99,7 @@
                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Invalid email address" required>
 
                 <label for="username"><b>User name</b></label>
-                <input type="text" placeholder="Enter username" id="username1" name="username1" required>
+                <label for="username1"></label><input type="text" placeholder="Enter username" id="username1" name="username1" required>
 
                 <label for="psw"><b>Password</b></label>
                 <input type="password" placeholder="Enter Password" id="psw" name="psw" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
@@ -126,9 +128,14 @@
 
 <script type="text/javascript">
     var login = false;
+
     /**
      * close chosen divs
-     * @param args - boolean to hide welcome div or not
+     * @param welcome
+     * @param login
+     * @param game
+     * @param settings
+     * @param register
      */
     function closeDivs(welcome, login, game, settings, register)
     {
@@ -235,32 +242,6 @@
         }
     };
 
-    function updateUp() {
-        $(document).keydown(function(event){
-
-            upkey =  event.key;
-            $(document).unbind()
-        });
-    }
-    function updateDown() {
-        $(document).keydown(function(event){
-            downkey =  (event.key);
-            $(document).unbind()
-        });
-    }
-    function updateLeft() {
-        $(document).keydown(function(event){
-            leftkey =  (event.key);
-            $(document).unbind()
-        });
-    }
-    function updateRight() {
-        $(document).keydown(function(event){
-            rightkey =  (event.key);
-            $(document).unbind()
-        });
-
-    }
 </script>
 
 </body>
