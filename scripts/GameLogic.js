@@ -534,6 +534,7 @@ $( document ).ready(function() {
         board[moving_bonus.i][moving_bonus.j] = board_copy[moving_bonus.i][moving_bonus.j];
         randomMove(moving_bonus);
         test.innerText = board[moving_bonus.i][moving_bonus.j];
+
         if(board[moving_bonus.i][moving_bonus.j] == 2)
         {
             move_object = false;
