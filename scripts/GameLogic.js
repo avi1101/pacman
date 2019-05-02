@@ -8,6 +8,8 @@ var time_elapsed = 0;
 $( document ).ready(function() {
     //var context2 = canvas1.getContext("2d");
     var shape = new Object(), g1 = new Object(), g2 = new Object(), g3 = new Object(), moving_bonus = new Object();
+    var totalscore = 0;
+    var move_object = true;
     var controls = [], invert_controls = [];
     var board = [];
     var isSlowMo = 0, isPoison = 0;
@@ -74,6 +76,7 @@ $( document ).ready(function() {
     // mega fruit = 25 points
     function Start() {
         sound.play();
+        move_object = true;
         controls = [upkey, downkey, leftkey, rightkey];
         invert_controls = [downkey, upkey, rightkey, leftkey];
         isPoison = isSlowMo = false;
@@ -82,6 +85,7 @@ $( document ).ready(function() {
         // w = window.innerWidth/2;
         // h = window.innerHeight/2;
         lives = 3;
+        totalscore = 0;
         monsters = nummonsters;
         timeleft = gametime;
         food_remain = numballs;
@@ -122,6 +126,7 @@ $( document ).ready(function() {
                 board[emptyCell[0]][emptyCell[1]] = 4;
                 food_remain--;
                 f5--;
+                totalscore += 5;
             }
             while(f15 > 0)
             {
@@ -129,6 +134,7 @@ $( document ).ready(function() {
                 board[emptyCell[0]][emptyCell[1]] = 5;
                 food_remain--;
                 f15--;
+                totalscore += 15;
             }
             while(f25 > 0)
             {
@@ -136,13 +142,15 @@ $( document ).ready(function() {
                 board[emptyCell[0]][emptyCell[1]] = 8;
                 food_remain--;
                 f25--;
+                totalscore += 25;
             }
             if(food_remain > 0) f5 = food_remain;
 
         }
-        var moving_object = findRandomEmptyCell(board);
+        var moving_object = findRandomCellFarFromPacman(board);
         moving_bonus.i = moving_object[0];
         moving_bonus.j = moving_object[1];
+        totalscore += 50;
         board[moving_object[0]][moving_object[1]] = 7;
         var poison = findRandomEmptyCell(board);
         board[poison[0]][poison[1]] = 6;
@@ -154,8 +162,7 @@ $( document ).ready(function() {
             board_copy[i] = new Array();
             for(var j = 0; j < width; j++)
                 if(board[i][j] >= 4) {
-                    if(board[i][j] == 9 || board[i][j] == 6)
-                        board[i][j] = board[i][j];
+                    if(board[i][j] == 7) continue;
                     board_copy[i][j] = board[i][j];
                 }
                 else
@@ -366,6 +373,7 @@ $( document ).ready(function() {
      */
     function UpdatePosition() {
         board_copy[shape.i][shape.j] = board[shape.i][shape.j] = 0;
+        var eat = 0;
         var x = GetKeyPressed();
         if (x === 1) {
             if (shape.j > 0 && board[shape.i][shape.j - 1] !== 1) {
@@ -400,6 +408,11 @@ $( document ).ready(function() {
         if (board[shape.i][shape.j] === 8) {
             score += 25;
         }
+        if (board[shape.i][shape.j] === 7) {
+            score += 50;
+            move_object = false;
+        }
+        else if(ghost_delay == 0) movingCandy();
         if (board[shape.i][shape.j] === 9) {
             ghostdelayinterval = 10;
             ghostslowmo = 100;
@@ -419,19 +432,18 @@ $( document ).ready(function() {
         if(board[shape.i][shape.j] == 3)
         {
             board[shape.i][shape.j] = 3;
-            lives--;
-            if(lives < 0)
-                status = 3;
-            else
-            {
-                GhostEatPacman();
-            }
+            GhostEatPacman();
         }
         else board[shape.i][shape.j] = 2;
         var currentTime = new Date();
         time_elapsed = gametime - ((currentTime - start_time) / 1000);
         if(time_elapsed == 0)
-            status = 3;
+        {
+            if(score < 150)
+                endGame(2);
+            else
+                endGame(1);
+        }
         time_elapsed = secondsToHms(~~time_elapsed);
         for(var i = 0; i < monsters && ghost_delay == 0; i++)
         {
@@ -439,6 +451,7 @@ $( document ).ready(function() {
             if(stack_ghosts[i].i == shape.i && stack_ghosts[i].j == shape.j)
             {
                 GhostEatPacman();
+                eat++;
             }
         }
         if(ghost_delay == 0)
@@ -464,24 +477,40 @@ $( document ).ready(function() {
             }
             poison_duraion--;
         }
-        if (score === (numballs*6/10)*5+(numballs*3/10)*15+(numballs*1/10)*25 - 25) {
-            window.clearInterval(interval);
-            window.alert("You Win!");
-        }
-        else if(status == 3) {
-            window.clearInterval(interval);
-            window.alert("YOU LOST!");
+        if(score >= totalscore)
+        {
+            endGame(1);
         }
         else {
             Draw();
         }
     }
 
+    function endGame(s)
+    {
+        window.clearInterval(interval);
+        sound.pause();
+        var endimage = new Image();
+        if(s == 3)
+        {
+            endimage.src = "images/youlost.PNG";
+        }
+        else if(s == 2)
+        {
+            endimage.src = "images/youcandobetter.PNG";
+        }
+        else
+        {
+            endimage.src = "images/wehaveawinner.PNG";
+        }
+        context.drawImage(endimage,endimage.width,endimage.height,10,canvas.width/4,canvas.width/2,canvas.width/2);
+    }
+
     function GhostEatPacman()
     {
         lives--;
         if(lives < 0)
-            status = 3;
+            endGame(3);
         else
         {
             var pos = findRandomEmptyCell(board);
@@ -501,9 +530,17 @@ $( document ).ready(function() {
 
     function movingCandy()
     {
-        board[ghost.i][ghost.j] = board_copy[ghost.i][ghost.j];
+        if(!move_object) return;
+        board[moving_bonus.i][moving_bonus.j] = board_copy[moving_bonus.i][moving_bonus.j];
         randomMove(moving_bonus);
-        board[ghost.i][ghost.j] = 7;
+        test.innerText = board[moving_bonus.i][moving_bonus.j];
+        if(board[moving_bonus.i][moving_bonus.j] == 2)
+        {
+            move_object = false;
+            score += 50;
+        }
+        else
+            board[moving_bonus.i][moving_bonus.j] = 7;
     }
 
     function secondsToHms(d) {
