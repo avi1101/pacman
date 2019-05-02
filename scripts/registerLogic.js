@@ -73,7 +73,7 @@ function check_password(username,password)
         {
             logged_name = users[username].firstName+" "+users[username].lastName;
             document.getElementById("loginbtn").innerText = "Disconnect";
-            name_title.innerText = "Welcome "+users[username].firstName+" "+users[username].lastName+"!";
+            // name_title.innerText = "Welcome "+users[username].firstName+" "+users[username].lastName+"!";
             OpenGame();
         }
 }

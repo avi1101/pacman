@@ -7,8 +7,10 @@ var score = 0;
 var time_elapsed = 0;
 $( document ).ready(function() {
     //var context2 = canvas1.getContext("2d");
-    var shape = new Object(), g1 = new Object(), g2 = new Object(), g3 = new Object();
+    var shape = new Object(), g1 = new Object(), g2 = new Object(), g3 = new Object(), moving_bonus = new Object();
+    var controls = [], invert_controls = [];
     var board = [];
+    var isSlowMo = 0, isPoison = 0;
     setMusic()
     var board_copy = [];
     var pac_color;
@@ -27,10 +29,15 @@ $( document ).ready(function() {
     var food_remain = 20;
     var status = 0; //0 - not started, 1 - on going, 2 - win, 3 - lose, 4 = draw
     var ghosts = [new Image(),new Image(),new Image()], gs = [g1, g2, g3];
-    var ghost_delay = 1;
-    var random_straight_walk = 0;
+    var ghost_delay = 1, poison_duraion = 0;
+    var random_straight_walk = 0, ghostslowmo = 0, ghostdelayinterval = 2;
+    var slowclock = new Image(), poisonimg = new Image();
     context = canvas.getContext("2d");
     //var ghost4 = new Image();
+    moving_bonus.img = new Image();
+    moving_bonus.img.src = "images/moving_candy.gif";
+    slowclock.src = "images/clock.gif";
+    poisonimg.src = "images/poison.gif";
     ghosts[0].src = "images/blue_ghost.gif";
     ghosts[1].src = "images/pink_ghost.gif";
     ghosts[2].src = "images/red_ghost.gif";
@@ -61,15 +68,20 @@ $( document ).ready(function() {
         }
     }
     // 0 - nothing, 4 - food, 2 - pacman, 3 - ghost, 1 - wall, 5 - fruit, 6 - poison, 7 - moving bonus, 8 - mega fruit
+    // 9 - slow mo clock
     // food =       5 points
     // fruit =      15 points
     // mega fruit = 25 points
     function Start() {
         sound.play();
+        controls = [upkey, downkey, leftkey, rightkey];
+        invert_controls = [downkey, upkey, rightkey, leftkey];
+        isPoison = isSlowMo = false;
+        ghostslowmo = 0;
+        poison_duraion = 0;
         // w = window.innerWidth/2;
         // h = window.innerHeight/2;
         lives = 3;
-
         monsters = nummonsters;
         timeleft = gametime;
         food_remain = numballs;
@@ -83,6 +95,7 @@ $( document ).ready(function() {
         ob_size = canvas.width / width;
         start_time = new Date();
         context = canvas.getContext("2d");
+        messages = -1*ob_size*6;
         if(interval != null)
             window.clearInterval(interval);
         setMonsters();
@@ -98,15 +111,6 @@ $( document ).ready(function() {
             board[pos[0]][pos[1]] = 3;
             gs[i].i = pos[0];
             gs[i].j = pos[1];
-        }
-        for(var i = 0; i < fruits; i++)
-        {
-            var pos = findRandomEmptyCell(board);
-            var isPoison = Math.floor(Math.random() * 10) > 7;
-            if(isPoison)
-                board[pos[0]][pos[1]] = 6;
-            else
-                board[pos[0]][pos[1]] = 5;
         }
         var f5 = food_remain*6/10;
         var f15 = food_remain*3/10;
@@ -136,13 +140,24 @@ $( document ).ready(function() {
             if(food_remain > 0) f5 = food_remain;
 
         }
+        var moving_object = findRandomEmptyCell(board);
+        moving_bonus.i = moving_object[0];
+        moving_bonus.j = moving_object[1];
+        board[moving_object[0]][moving_object[1]] = 7;
+        var poison = findRandomEmptyCell(board);
+        board[poison[0]][poison[1]] = 6;
+        var slowmo = findRandomEmptyCell(board);
+        board[slowmo[0]][slowmo[1]] = 9;
         board_copy = new Array();
         for(var i = 0; i < height; i++)
         {
             board_copy[i] = new Array();
             for(var j = 0; j < width; j++)
-                if(board[i][j] >= 4)
+                if(board[i][j] >= 4) {
+                    if(board[i][j] == 9 || board[i][j] == 6)
+                        board[i][j] = board[i][j];
                     board_copy[i][j] = board[i][j];
+                }
                 else
                     board_copy[i][j] = 0;
         }
@@ -154,6 +169,18 @@ $( document ).ready(function() {
             keysDown[e.code] = false;
         }, false);
         interval = setInterval(UpdatePosition, 100);
+    }
+
+    function printboard(board, name)
+    {
+        var s = "";
+        for(var i = 0; i < height; i++)
+        {
+            for(var j = 0; j < width; j++)
+                s += board[i][j]+", ";
+            s += '\n';
+        }
+        alert(name+":\n"+s);
     }
 
     function findRandomEmptyCell(board) {
@@ -180,16 +207,16 @@ $( document ).ready(function() {
      * @return {number}
      */
     function GetKeyPressed() {
-        if (keysDown[upkey]) {
+        if (keysDown[controls[0]]) {
             return 1;
         }
-        if (keysDown[downkey]) {
+        if (keysDown[controls[1]]) {
             return 2;
         }
-        if (keysDown[leftkey]) {
+        if (keysDown[controls[2]]) {
             return 3;
         }
-        if (keysDown[rightkey]) {
+        if (keysDown[controls[3]]) {
             return 4;
         }
     }
@@ -208,7 +235,17 @@ $( document ).ready(function() {
                 if (board[i][j] === 2) {
                     context.beginPath();
                     if(mouth < 2)
-                        context.arc(center.x, center.y, ob_size/2, 0.15 * Math.PI, 1.85 * Math.PI); // half circle
+                    {
+                        //directions: 1 = right, 0 = left, 3 = down, 2 = up
+                        if(shape.direction == 0)
+                            context.arc(center.x, center.y, ob_size/2, 0.15 * Math.PI, 1.85 * Math.PI); // half circle
+                        else if(shape.direction == 1)
+                            context.arc(center.x, center.y, ob_size/2, 1.15 * Math.PI, 2.85 * Math.PI);
+                        else if(shape.direction == 2)
+                            context.arc(center.x, center.y, ob_size/2, 0.7 * Math.PI, 2.35 * Math.PI);
+                        else
+                            context.arc(center.x, center.y, ob_size/2, -0.35 * Math.PI, 1.35 * Math.PI);
+                    }
                     else
                         context.arc(center.x, center.y, ob_size/2, 0 * Math.PI, 2 * Math.PI);
                     mouth += 1;
@@ -218,7 +255,14 @@ $( document ).ready(function() {
                     context.fillStyle = pac_color; //color
                     context.fill();
                     context.beginPath();
-                    context.arc(center.x + ob_size/12, center.y - ob_size/4, ob_size/12, 0, 2 * Math.PI); // circle
+                    if(shape.direction == 0)
+                        context.arc(center.x + ob_size/12, center.y - ob_size/4, ob_size/12, 0, 2 * Math.PI); // circle
+                    else if(shape.direction == 1)
+                        context.arc(center.x - ob_size*1/12, center.y - ob_size*1/4, ob_size/12, 0, 2 * Math.PI); // circle
+                    else if(shape.direction == 2)
+                        context.arc(center.x + ob_size*1/4, center.y - ob_size/12, ob_size/12, 0, 2 * Math.PI); // circle
+                    else
+                        context.arc(center.x - ob_size/4, center.y - ob_size/12, ob_size/12, 0, 2 * Math.PI); // circle
                     context.fillStyle = "black"; //color
                     context.fill();
                 } else if (board[i][j] === 4) {
@@ -242,6 +286,14 @@ $( document ).ready(function() {
                     context.strokeStyle = "blue"; //color
                     context.lineWidth = ob_size/12;
                     context.stroke();
+                } else if (board[i][j] === 7) {
+                    context.drawImage(moving_bonus.img,0,0,moving_bonus.img.width,moving_bonus.img.height,center.x-ob_size/2,center.y-ob_size/2,ob_size,ob_size);
+                }
+                else if (board[i][j] === 6) {
+                    context.drawImage(poisonimg,0,0,poisonimg.width,poisonimg.height,center.x-ob_size/2,center.y-ob_size/2,ob_size,ob_size);
+                }
+                else if (board[i][j] === 9) {
+                    context.drawImage(slowclock,0,0,slowclock.width,slowclock.height,center.x-ob_size/2,center.y-ob_size/2,ob_size,ob_size);
                 } else if (board[i][j] === 3) { // draw a ghost
                     // context.beginPath();
                     // context.arc(center.x, center.y, ob_size/4, 0, 2 * Math.PI); // circle
@@ -269,6 +321,32 @@ $( document ).ready(function() {
                 }
             }
         }
+        if(isSlowMo)
+        {
+            context.beginPath();
+            context.rect(10, 5, ob_size*6, ob_size); //x y control the stop
+            context.strokeStyle = "blue"; //color
+            context.lineWidth = 10;
+            context.stroke();
+            context.fillStyle = 'white';
+            context.font = ob_size/2+'px Courier';
+            context.fillText(`Slow Motion!`, ob_size + 5, ob_size*1.5/2 + 5);
+            context.closePath();
+        }
+        if(isPoison)
+        {
+            context.beginPath();
+            context.rect(canvas.width - 10 - ob_size*6, 5, ob_size*6, ob_size);
+            context.strokeStyle = "green"; //color
+            context.lineWidth = 10;
+            context.stroke();
+            context.fillStyle = 'white';
+            context.font = ob_size/2+'px Courier';
+            context.fillText(`Poisoned!`,   canvas.width - ob_size*6 + 50, ob_size*1.5/2 + 5);
+            context.closePath();
+        }
+        //printboard(board,"board");
+        //printboard(board_copy,"copy");
     }
 
     function getGhost(i, j)
@@ -322,6 +400,22 @@ $( document ).ready(function() {
         if (board[shape.i][shape.j] === 8) {
             score += 25;
         }
+        if (board[shape.i][shape.j] === 9) {
+            ghostdelayinterval = 10;
+            ghostslowmo = 100;
+            isSlowMo = true;
+        }
+        if (board[shape.i][shape.j] === 6) {
+            poison_duraion = 100;
+            isPoison = true;
+            pac_color = "green";
+            for(var n = 0; n < 4; n++)
+            {
+                var t = controls[n];
+                controls[n] = invert_controls[n];
+                invert_controls[n] = t;
+            }
+        }
         if(board[shape.i][shape.j] == 3)
         {
             board[shape.i][shape.j] = 3;
@@ -348,11 +442,27 @@ $( document ).ready(function() {
             }
         }
         if(ghost_delay == 0)
-            ghost_delay = 2;
+            ghost_delay = ghostdelayinterval;
         else
             ghost_delay--;
-        if (score >= 20 && time_elapsed <= 10) {
-            pac_color = "green";
+        if(ghostslowmo == 0) {
+            ghostdelayinterval = 2;
+            isSlowMo = false;
+        }
+        ghostslowmo--;
+        if(isPoison)
+        {
+            if(poison_duraion == 0) {
+                isPoison = false;
+                pac_color = "yellow";
+                for(var n = 0; n < 4; n++)
+                {
+                    var t = controls[n];
+                    controls[n] = invert_controls[n];
+                    invert_controls[n] = t;
+                }
+            }
+            poison_duraion--;
         }
         if (score === (numballs*6/10)*5+(numballs*3/10)*15+(numballs*1/10)*25 - 25) {
             window.clearInterval(interval);
@@ -387,6 +497,13 @@ $( document ).ready(function() {
         board[ghost.i][ghost.j] = board_copy[ghost.i][ghost.j];
         semi_randomMove(ghost);
         board[ghost.i][ghost.j] = 3;
+    }
+
+    function movingCandy()
+    {
+        board[ghost.i][ghost.j] = board_copy[ghost.i][ghost.j];
+        randomMove(moving_bonus);
+        board[ghost.i][ghost.j] = 7;
     }
 
     function secondsToHms(d) {
