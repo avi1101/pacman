@@ -13,7 +13,6 @@ $( document ).ready(function() {
     var controls = [], invert_controls = [];
     var board = [];
     var isSlowMo = 0, isPoison = 0;
-    setMusic()
     var board_copy = [];
     var pac_color;
     var start_time;
@@ -61,7 +60,7 @@ $( document ).ready(function() {
     $('#start_game_btn').click(function(){
         Start();
     });
-
+    setMusic()
     function setMonsters()
     {
         for(var i = 0; i < monsters; i++) {
@@ -89,7 +88,7 @@ $( document ).ready(function() {
         monsters = nummonsters;
         timeleft = gametime;
         food_remain = numballs;
-        h = window.screen.height*0.6;
+        h = window.screen.height*0.7;
         board = getRandomBoard();
         status = score = 0;
         pac_color = "yellow";
@@ -533,9 +532,7 @@ $( document ).ready(function() {
         if(!move_object) return;
         board[moving_bonus.i][moving_bonus.j] = board_copy[moving_bonus.i][moving_bonus.j];
         randomMove(moving_bonus);
-        test.innerText = board[moving_bonus.i][moving_bonus.j];
-
-        if(board[moving_bonus.i][moving_bonus.j] == 2)
+        if(moving_bonus.i == shape.i && moving_bonus.j == shape.j)
         {
             move_object = false;
             score += 50;
