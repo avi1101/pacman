@@ -64,32 +64,33 @@ function updateUp() {
     $(document).keydown(function(event){
         upkey =  event.key;
         $(document).unbind();
-
-        document.getElementById("up").innerText = upkey;
+        alert("UP key is : "+upkey);
+       // document.getElementById("up").innerText = upkey;
     });
 }
 function updateDown() {
     $(document).keydown(function(event){
         downkey =  (event.key);
-
+        alert("DOWN key is : "+downkey);
         $(document).unbind();
 
-        document.getElementById("down").innerText = downkey;
+       // document.getElementById("down").innerText = downkey;
     });
 }
 function updateLeft() {
     $(document).keydown(function(event){
         leftkey =  (event.key);
+        alert("LEFT key is : "+leftkey);
         $(document).unbind();
-        document.getElementById("left").innerText = leftkey;
+     //   document.getElementById("left").innerText = leftkey;
     });
 }
 function updateRight() {
     $(document).keydown(function(event){
         rightkey =  (event.key);
-
+        alert("RIGHT key is : "+rightkey);
         $(document).unbind();
-        document.getElementById("right").innerText = rightkey;
+      // document.getElementById("right").innerText = rightkey;
     });
 
 }
