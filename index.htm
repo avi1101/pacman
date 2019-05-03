@@ -18,6 +18,7 @@
 
     <div class="header">                            <!------- Header DIV here --------->
         <a href="#top" class="logo"><img src="images/pcgif.gif" height="40" width="85" id="logoimg"/></a>
+        <p id="insert" style="display: inline;color:yellow"></p>
         <div class="header-right">
             <button class="button" id="loginbtn" onclick="loginButton()" >Login</button>
             <button class="button" onclick="OpenGame()" >Game</button>
@@ -41,7 +42,7 @@
             <input onclick="check_password(username.value,password.value)" class="registerbtn" type="button" value="login!">
         </form>
     </div>
-    <div class="settings" id="settings" style="display:none;">               <!------- Settings DIV here --------->
+     <div class="split settings center" id="settings" style="display:none;">               <!------- Settings DIV here --------->
         <form>
             Up Button:
             <input type="button" class=" button1" value="set Up movement" onclick=" upkey = updateUp()"><br><br>
@@ -66,12 +67,21 @@
             <button class=" button2"  style="vertical-align:middle" onclick="randomVals();"><span>random values</span></button>
             <button type="button"  style="vertical-align:middle" class=" button0" id="done"><span>Start!</span></button>
         </form>
-
     </div>
-    <div id="myModal" class="modal">                        <!------- model DIV here --------->
+
+     <div id="myModal" class="modal">                        <!------- model DIV here --------->
         <div class="modal-content">
             <span class="close">&times;</span>
-            <p> Elad Cohen 308468784 <br> Avi Elly 308000017</p>
+            <p2> Elad Cohen 308468784 <br> Avi Elly 308000017<br>
+            jQuery plugin:<br> * we used the plugin in order to prevent script loading before
+                                document and DOM loading by using the "$( document ).ready" method<br>
+                                * we used the plugin on the registration form to prevent form submission
+                                    and on click event for the submission button<br>
+by using the "$('#reg1').submit(function(e){ e.preventDefault(e); });" method<br>
+            * we used the plugin in order to save the keys the player decided to use for gameplay
+            by using the "$(document).keydown(function(event){" method.<br>Difficulties:<br>
+                * The lack of ability to create our own objects<br>
+            * Lack of design patterns <br> *Lack of ability to use complex algorithms on client side</p2>
         </div>
     </div>
     <div id="game" style="display: none;">          <!--------- Game DIV here ----------->
@@ -128,85 +138,89 @@
 
 <script type="text/javascript">
     var login = false;
-
     /**
      * close chosen divs
      * @param welcome
      * @param login
      * @param game
      * @param settings
-     * @param register
      */
-    function closeDivs(welcome, login, game, settings, register)
+    function closeDivs(welcome, login, game, settings,register, left,right)
     {
         if(welcome)
             document.getElementById("welcome").style.display = "none";
+        if(register)
+            document.getElementById("register").style.display = "none";
         if(login)
             document.getElementById("login").style.display = "none";
         if(game)
             document.getElementById("game").style.display = "none";
         if(settings)
             document.getElementById("settings").style.display = "none";
-        if(register)
-            document.getElementById("register").style.display = "none";
+
     }
 
     function OpenGame()
     {
-        if(document.getElementById("loginbtn").innerText == "Login") {
+        if(document.getElementById("loginbtn").innerText === "Login") {
             alert("You need to login first");
             return;
         }
         StopGame();
-        closeDivs(true, true, true, true, true);
+        closeDivs(true, true, true, true, true,true,true);
         var game_div = document.getElementById("game");
-        if(game_div.style.display == "none")
+        if(game_div.style.display === "none")
             game_div.style.display = "block";
-        else
-            game_div.style.display = "none"; /* none inline block */
+
     }
     function loginButton()
     {
-        closeDivs(true, true, true, true, true);
+        closeDivs(true, true, true, true, true,true,true);
         StopGame();
-        if(document.getElementById("loginbtn").innerText == "Disconnect")
+        if(document.getElementById("loginbtn").innerText === "Disconnect")
         {
+
             login = false;
             document.getElementById("loginbtn").innerText = "Login";
+            document.getElementById("insert").innerText = "";
         }
         var login_div = document.getElementById("login");
         if(login_div.style.display === "none")
             login_div.style.display = "block";
-        else
-            login_div.style.display = "none"; /* none inline block */
+
     }
     function OpenWelcome()
     {
-        closeDivs(true, true, true, true, true);
+        closeDivs(true, true, true, true, true,true,true);
         var welcome_div = document.getElementById("welcome");
-        if(welcome_div.style.display == "none")
+        if(welcome_div.style.display === "none")
             welcome_div.style.display = "block";
-        else
-            welcome_div.style.display = "none"; /* none inline block */
+
     }
 
     function OpenRegister()
     {
-        closeDivs(true, true, true, true, true);
+        closeDivs(true, true, true, true, true,true,true);
         var register_div = document.getElementById("register");
-        if(register_div.style.display == "none")
+        if(register_div.style.display === "none")
             register_div.style.display = "block";
-        else
-            register_div.style.display = "none"; /* none inline block */
+
     }
     function OpenSetting()
     {
-        closeDivs(true, true, true, true, true);
+        closeDivs(true, true, true, true, true,true,true);
         var setting_div = document.getElementById("settings");
         if(setting_div.style.display === "none")
             setting_div.style.display = "block";
-        else
-            setting_div.style.display = "none"; /* none inline block */
+
+        var left_div = document.getElementById("left_set");
+        if(left_div.style.display === "none")
+            left_div.style.display = "inline";
+
+        var right_div = document.getElementById("right_set");
+        if(right_div.style.display === "none")
+            right_div.style.display = "inline";
+
     }
     //     Model
 
@@ -243,7 +257,11 @@
     };
 
 </script>
-
+<br><br><br><br><br><br><br>
+<footer>
+    <p>Posted by: Elad Cohen 308468784, Avi Elly 308000017<br>
+    Contact information: <a href="mailto:notRealEmail@post.bgu.ac.il">
+        give100@score100.com</a>.</p><br><br><br>
+</footer>
 </body>
-
 </html>

@@ -64,6 +64,7 @@ function check_password(username,password)
     }
     if((username in users && users[username].password=== password))
         login=true;
+
     document.getElementById("username").value = "";
     document.getElementById("password").value = "";
     if(!login){
@@ -72,6 +73,7 @@ function check_password(username,password)
     else
         {
             logged_name = users[username].firstName+" "+users[username].lastName;
+            document.getElementById("insert").innerText = "        Hello "+logged_name;
             document.getElementById("loginbtn").innerText = "Disconnect";
             // name_title.innerText = "Welcome "+users[username].firstName+" "+users[username].lastName+"!";
             OpenGame();

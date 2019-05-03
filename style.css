@@ -1,9 +1,8 @@
 * {box-sizing: border-box;}
-body { 
+body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   text-align: center;
-
 }
 
 form {
@@ -24,7 +23,6 @@ img {
   background-color: #000000;
   padding: 20px 10px;
   height: 85px;
-  widows: 85px;
 }
 
 .header button {
@@ -63,7 +61,16 @@ img {
 .header-right {
   float: right;
 }
+#insert{
+  position: relative;
 
+  top: -44%;
+  float: left;
+  padding-left: 45px;
+  font-size: 25px;
+  font-style: italic;
+  color: yellow;
+}
 .logo{
   float: left;
 }
@@ -218,15 +225,37 @@ a {
   color: red;
   padding: 20px;
 }
+
 div.settings {
-  background:  #111111;
+  background-color: #8c8c8c;
   color: whitesmoke;
   font-size: 18px;
+  flex: 50%;
+  height: 100%;
+  float: left;
+  width: 100%;
+  padding: 10px;
 }
+/*
+.left {
+  height: 100%;
+  float: left;
+  width: 33.33%;
+  padding: 10px;
+}
+.right{
+  flex: 50%;
+  height: 100%;
+  float: right;
+  width: 33.33%;
+  padding: 10px;
+}
+*/
 .button1{  border: none;  padding: 20px;  text-align: center;  cursor: pointer;
   margin: 5px;  width: 50%;border-radius: 12px;
-  background-color: goldenrod;
+  background-color: gold; font-size: 20px;
   border-collapse: collapse;}
+
 .button1:hover {
   box-shadow: 0 8px 12px 0 rgba(0,0,0,0.24), 0 15px 20px 0 rgba(0,0,0,0.19);
 }
@@ -289,7 +318,6 @@ input[type=number] {
   cursor: pointer;
   margin: 5px;
 }
-
 .button2 span {
   cursor: pointer;
   display: inline-block;
@@ -313,4 +341,19 @@ input[type=number] {
 .button2:hover span:after {
   opacity: 1;
   right: 0;
+}
+.p2{
+  float:left;
+}
+footer {
+  position:fixed;
+  bottom:0;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  color : whitesmoke;
+  background-color: #000000;
+  padding: 18px 10px;
+  height: 85px;
+
 }

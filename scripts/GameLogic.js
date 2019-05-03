@@ -485,7 +485,6 @@ $( document ).ready(function() {
             Draw();
         }
     }
-
     function endGame(s)
     {
         window.clearInterval(interval);
@@ -494,6 +493,7 @@ $( document ).ready(function() {
         if(s == 3)
         {
             endimage.src = "images/youlost.PNG";
+
         }
         else if(s == 2)
         {
@@ -503,7 +503,13 @@ $( document ).ready(function() {
         {
             endimage.src = "images/wehaveawinner.PNG";
         }
-        context.drawImage(endimage,endimage.width,endimage.height,10,canvas.width/4,canvas.width/2,canvas.width/2);
+        endimage.onload = function() {
+
+            context.drawImage(endimage,0,0,canvas.width,canvas.width);
+
+        };
+
+       //context.drawImage(endimage,endimage.width,endimage.height,10,canvas.width/4,canvas.width/2,canvas.width/2);
     }
 
     function GhostEatPacman()
