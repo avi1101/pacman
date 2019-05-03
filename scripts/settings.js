@@ -21,18 +21,6 @@ $( document ).ready(function() {
         nummonsters = $('#nummonsters').val();
         if (nummonsters < 1 || nummonsters > 3)
             nummonsters = 2;
-        /**
-         var re = /[0-9A-Fa-f]{6}/g;
-         var color5 = $('#5color').val();
-         if (!re.test(color5.substring(1)) || 16777215>parseInt(color5.substring(1),16)|| parseInt(color5.substring(1),16)<0)
-         color5 = "#"+Math.floor(Math.random()*16777215).toString(16);
-         var color15 = $('#15color').val();
-         if (!re.test(color15.substring(1)) || 16777215>parseInt(color15.substring(1),16)|| parseInt(color15.substring(1),16)<0)
-         color5 = "#"+Math.floor(Math.random()*16777215).toString(16);
-         var color25 = $('#25color').val();
-         if (!re.test(color25.substring(1)) || 16777215>parseInt(color25.substring(1),16)|| parseInt(color25.substring(1),16)<0)
-         color25 = "#"+Math.floor(Math.random()*16777215).toString(16);
-         **/
         // what now?
         color5 = $('#cp5').val();
         color15 = $('#cp15').val();
@@ -74,27 +62,34 @@ $( document ).ready(function() {
 
 function updateUp() {
     $(document).keydown(function(event){
-
         upkey =  event.key;
-        $(document).unbind()
+        $(document).unbind();
+
+        document.getElementById("up").innerText = upkey;
     });
 }
 function updateDown() {
     $(document).keydown(function(event){
         downkey =  (event.key);
-        $(document).unbind()
+
+        $(document).unbind();
+
+        document.getElementById("down").innerText = downkey;
     });
 }
 function updateLeft() {
     $(document).keydown(function(event){
         leftkey =  (event.key);
-        $(document).unbind()
+        $(document).unbind();
+        document.getElementById("left").innerText = leftkey;
     });
 }
 function updateRight() {
     $(document).keydown(function(event){
         rightkey =  (event.key);
-        $(document).unbind()
+
+        $(document).unbind();
+        document.getElementById("right").innerText = rightkey;
     });
 
 }

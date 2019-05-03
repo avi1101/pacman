@@ -169,10 +169,10 @@ $( document ).ready(function() {
         }
         keysDown = {};
         addEventListener("keydown", function (e) {
-            keysDown[e.code] = true;
+            keysDown[e.key] = true;
         }, false);
         addEventListener("keyup", function (e) {
-            keysDown[e.code] = false;
+            keysDown[e.key] = false;
         }, false);
         interval = setInterval(UpdatePosition, 100);
     }

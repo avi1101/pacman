@@ -45,13 +45,13 @@
      <div class="split settings center" id="settings" style="display:none;">               <!------- Settings DIV here --------->
         <form>
             Up Button:
-            <input type="button" class=" button1" value="set Up movement" onclick=" upkey = updateUp()"><br><br>
+            <input type="button" id="up" class=" button1" value="set Up movement" onclick=" upkey = updateUp()"><br><br>
             Down Button:
-            <input type="button" class=" button1" value="set Down movement" onclick="downkey = updateDown()"><br><br>
+            <input type="button" id="down" class=" button1" value="set Down movement" onclick="downkey = updateDown()"><br><br>
             Left Button:
-            <input type="button" class=" button1" value="set Left movement" onclick="leftkey = updateLeft()"><br><br>
+            <input type="button" id="left" class=" button1" value="set Left movement" onclick="leftkey = updateLeft()"><br><br>
             Right Button:
-            <input type="button" class=" button1" value="set Right movement" onclick="rightkey = updateRight()"><br><br>
+            <input type="button" id="right" class=" button1" value="set Right movement" onclick="rightkey = updateRight()"><br><br>
             <label for="numballs">number of balls (between 50 and 90):</label>
             <input type="number" id="numballs" name="numballs" min="50" max="90"> <br><br>
             <label for="gametime">length of game in sec (min 60):</label>
@@ -65,7 +65,7 @@
             <label>Select 25 point balls color:</label>
              <input type="color" name="cp25" id="cp25" value="#66ff66"><br><br>
             <button class=" button2"  style="vertical-align:middle" onclick="randomVals();"><span>random values</span></button>
-            <button type="button"  style="vertical-align:middle" class=" button0" id="done"><span>Start!</span></button>
+            <button type="button"  style="vertical-align:middle" class=" button0" onclick="OpenGame()" id="done"><span>Start!</span></button>
         </form>
     </div>
 
@@ -137,12 +137,16 @@ by using the "$('#reg1').submit(function(e){ e.preventDefault(e); });" method<br
 
 <script type="text/javascript">
     var login = false;
+
     /**
      * close chosen divs
      * @param welcome
      * @param login
      * @param game
      * @param settings
+     * @param register
+     * @param left
+     * @param right
      */
     function closeDivs(welcome, login, game, settings,register, left,right)
     {
@@ -211,15 +215,6 @@ by using the "$('#reg1').submit(function(e){ e.preventDefault(e); });" method<br
         var setting_div = document.getElementById("settings");
         if(setting_div.style.display === "none")
             setting_div.style.display = "block";
-
-        var left_div = document.getElementById("left_set");
-        if(left_div.style.display === "none")
-            left_div.style.display = "inline";
-
-        var right_div = document.getElementById("right_set");
-        if(right_div.style.display === "none")
-            right_div.style.display = "inline";
-
     }
     //     Model
 
