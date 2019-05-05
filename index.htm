@@ -84,18 +84,24 @@ by using the "$('#reg1').submit(function(e){ e.preventDefault(e); });" method<br
             * Lack of design patterns <br> *Lack of ability to use complex algorithms on client side</p2>
         </div>
     </div>
-    <div id="game" style="display: none;">          <!--------- Game DIV here ----------->
+    <div id="game" class="game_div" style="display: none;">          <!--------- Game DIV here ----------->
 <!--        <input id="lblScore" type="text" class="game_data"/>-->
-        <h2 id="lblScore" class="game_data">Score: 0 </h2>
+        <h3 id="lblScore" class="game_data">Score: 0 </h3>
 <!--        <input id="lblTime" type="text" class="game_data"/>-->
-        <h2 id="lblTime" class="game_data">Time: 0 seconds </h2>
-        <h2 id="life" class="game_data">Lives: 3 </h2>
-        <br/><br/>
+        <h3 id="lblTime" class="game_data">Time: 0 seconds </h3>
+        <h3 id="life" class="game_data">Lives: 3 </h3>
         <button id="start_game_btn">Start</button>
+        <br/><br/>
         <div class="canvas_container">
             <canvas id="canvas" height="500" width="500"></canvas>
         </div>
     </div>
+<div class="inst" id="inst1" style="display:none;">
+    <img src="images/clock.gif" width="30" height="30" style="margin-right: 15px; float: left;"/><p> Slow Motion </p>
+    <img src="images/poison.gif" width="30" height="30" style="margin-right: 15px; float: left;"/><p> Poison </p>
+    <img src="images/moving_candy.gif" width="30" height="30" style="margin-right: 15px; float: left;"/><p> Mega Bonus! </p>
+    <img src="images/blue_ghost.gif" width="30" height="30" style="margin-right: 15px; float: left;"/><p> Ghost </p>
+</div>
     <div id="register" style="display: none;">      <!------- Register DIV here --------->
         <form id="reg1" name="reg1">
             <div class="container">
@@ -130,11 +136,24 @@ by using the "$('#reg1').submit(function(e){ e.preventDefault(e); });" method<br
             </div>
 
             <div class="container signin">
-                <p>Already have an account? <a href="#">Sign in</a>.</p>
+                <p>Already have an account? <a href="#" onclick="loginButton()">Sign in</a>.</p>
             </div>
         </form>
     </div>
-
+<!--<div class="instructions">-->
+<!--    <br/><br/><br/><br/><br/>-->
+<!--    <p id="list_title">-->
+<!--        How to play:-->
+<!--    <ol id="list">-->
+<!--        <li id="item1">Register with a new account</li>-->
+<!--        <li id="item2">Login to your account</li>-->
+<!--        <li id="item3">Choose your own settings in the settings menu.</li>-->
+<!--        <li id="item4">Press "Game" to open the game page.</li>-->
+<!--        <li id="item5">Press "Start Game"</li>-->
+<!--        <li id="item6">Enjoy!</li>-->
+<!--    </ol>-->
+<!--    </p>-->
+<!--</div>-->
 <script type="text/javascript">
     var login = false;
 
@@ -148,7 +167,7 @@ by using the "$('#reg1').submit(function(e){ e.preventDefault(e); });" method<br
      * @param left
      * @param right
      */
-    function closeDivs(welcome, login, game, settings,register, left,right)
+    function closeDivs(welcome, login, game, settings,register, left,right, instr)
     {
         if(welcome)
             document.getElementById("welcome").style.display = "none";
@@ -160,6 +179,8 @@ by using the "$('#reg1').submit(function(e){ e.preventDefault(e); });" method<br
             document.getElementById("game").style.display = "none";
         if(settings)
             document.getElementById("settings").style.display = "none";
+        if(instr)
+            document.getElementById("inst1").style.display = "none";
 
     }
 
@@ -170,15 +191,18 @@ by using the "$('#reg1').submit(function(e){ e.preventDefault(e); });" method<br
             return;
         }
         StopGame();
-        closeDivs(true, true, true, true, true,true,true);
+        closeDivs(true, true, true, true, true,true,true, true);
         var game_div = document.getElementById("game");
+        var inst = document.getElementById("inst1");
         if(game_div.style.display === "none")
             game_div.style.display = "block";
+        if(inst.style.display === "none")
+            inst.style.display = "inline-block";
 
     }
     function loginButton()
     {
-        closeDivs(true, true, true, true, true,true,true);
+        closeDivs(true, true, true, true, true,true,true, true);
         StopGame();
         if(document.getElementById("loginbtn").innerText === "Disconnect")
         {
@@ -194,7 +218,7 @@ by using the "$('#reg1').submit(function(e){ e.preventDefault(e); });" method<br
     }
     function OpenWelcome()
     {
-        closeDivs(true, true, true, true, true,true,true);
+        closeDivs(true, true, true, true, true,true,true, true);
         var welcome_div = document.getElementById("welcome");
         if(welcome_div.style.display === "none")
             welcome_div.style.display = "block";
@@ -203,7 +227,7 @@ by using the "$('#reg1').submit(function(e){ e.preventDefault(e); });" method<br
 
     function OpenRegister()
     {
-        closeDivs(true, true, true, true, true,true,true);
+        closeDivs(true, true, true, true, true,true,true, true);
         var register_div = document.getElementById("register");
         if(register_div.style.display === "none")
             register_div.style.display = "block";
@@ -211,7 +235,7 @@ by using the "$('#reg1').submit(function(e){ e.preventDefault(e); });" method<br
     }
     function OpenSetting()
     {
-        closeDivs(true, true, true, true, true,true,true);
+        closeDivs(true, true, true, true, true,true,true, true);
         var setting_div = document.getElementById("settings");
         if(setting_div.style.display === "none")
             setting_div.style.display = "block";
@@ -252,8 +276,8 @@ by using the "$('#reg1').submit(function(e){ e.preventDefault(e); });" method<br
 
 </script>
 <br><br><br><br><br><br><br>
-<footer>
-    <p>Posted by: Elad Cohen 308468784, Avi Elly 308000017<br>
+<footer style="height: 10%;">
+    <p style="font-size: 12px;">Posted by: Elad Cohen 308468784, Avi Elly 308000017<br>
     Contact information: <a href="mailto:notRealEmail@post.bgu.ac.il">
         give100@score100.com</a>.</p><br><br><br>
 </footer>

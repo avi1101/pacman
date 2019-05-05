@@ -55,11 +55,19 @@ $( document ).ready(function() {
     //stack.push(ghost4);
     //Start();
     //Draw();
-    $('#canvas').height(window.screen.height*0.7);
-    $('#canvas').width(window.screen.height*0.7);
+    $('#canvas').height(window.screen.height*5/10);
+    $('#canvas').width(window.screen.height*5/10);
     $('#start_game_btn').click(function(){
+        // item1.style.listStyleImage = "url('images/clock.gif')";
+        // item1.innerText = "Slow Motion";
         Start();
     });
+    window.addEventListener("keydown", function(e) {
+        // space and arrow keys
+        if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+            e.preventDefault();
+        }
+    }, false);
     setMusic()
     function setMonsters()
     {
@@ -88,7 +96,7 @@ $( document ).ready(function() {
         monsters = nummonsters;
         timeleft = gametime;
         food_remain = numballs;
-        h = window.screen.height*0.7;
+        h = window.screen.height*7/10;
         board = getRandomBoard();
         status = score = 0;
         pac_color = "yellow";
@@ -436,7 +444,7 @@ $( document ).ready(function() {
         else board[shape.i][shape.j] = 2;
         var currentTime = new Date();
         time_elapsed = gametime - ((currentTime - start_time) / 1000);
-        if(time_elapsed == 0)
+        if(time_elapsed <= 0)
         {
             if(score < 150)
                 endGame(2);
